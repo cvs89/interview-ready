@@ -131,7 +131,7 @@ jobs:
         run: npm ci
 
       - name: Run Desktop TypeScript Type Check
-        run: npm run --workspace @interview-ready/desktop tsc --noEmit
+        run: npm run typecheck:desktop
 
       - name: Run Desktop Vitest Suite
         run: npm run test:desktop
