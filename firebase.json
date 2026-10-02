@@ -56,18 +56,8 @@
     ],
     "rewrites": [
       {
-        "source": "/api/**",
-        "run": {
-          "serviceId": "interview-ready-api",
-          "region": "us-central1"
-        }
-      },
-      {
         "source": "**",
-        "run": {
-          "serviceId": "interview-ready-web",
-          "region": "us-central1"
-        }
+        "destination": "/index.html"
       }
     ]
   }
