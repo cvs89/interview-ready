@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const cspHeader = `
   default-src 'self';
@@ -21,6 +22,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   output: "standalone",
+  outputFileTracingRoot: path.resolve(__dirname, "../../"),
   async headers() {
     return [
       {
