@@ -1,5 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/firebase/firebase-tools/master/schema/firebase-config.json",
+  "apphosting": {
+    "backendId": "interview-ready",
+    "rootDir": "apps/web"
+  },
   "hosting": {
     "public": "apps/web/public",
     "ignore": [
