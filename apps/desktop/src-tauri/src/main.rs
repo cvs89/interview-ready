@@ -1,1 +1,3 @@
-fn main() { interview_ready_desktop_lib::run(); }
+fn main() {
+    interview_ready_desktop_lib::run();
+}
