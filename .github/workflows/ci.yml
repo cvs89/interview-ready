@@ -1,0 +1,179 @@
+name: CI Quality Gates
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api-quality:
+    name: API (Lint, Mypy, Migrations, Pytest)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: interview_ready_test
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup uv and Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+          cache-dependency-glob: "apps/api/pyproject.toml"
+
+      - name: Install API dependencies
+        working-directory: apps/api
+        run: uv sync --extra dev
+
+      - name: Run Ruff Lint
+        working-directory: apps/api
+        run: uv run ruff check .
+
+      - name: Run Ruff Format Check
+        working-directory: apps/api
+        run: uv run ruff format --check .
+
+      - name: Run Strict Mypy
+        working-directory: apps/api
+        run: uv run mypy app
+
+      - name: Run Database Migrations
+        working-directory: apps/api
+        env:
+          DATABASE_URL: postgresql+asyncpg://test_user:test_password@localhost:5432/interview_ready_test
+        run: uv run alembic upgrade head
+
+      - name: Run Pytest Test Suite
+        working-directory: apps/api
+        env:
+          DATABASE_URL: postgresql+asyncpg://test_user:test_password@localhost:5432/interview_ready_test
+          REDIS_URL: redis://localhost:6379/0
+          APP_ENV: test
+        run: uv run pytest -v
+
+  web-quality:
+    name: Web (Lint, Typecheck, Unit Tests, Build)
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint:web
+
+      - name: Run TypeScript Type Check
+        run: npm run typecheck:web
+
+      - name: Run Unit Tests
+        run: npm run test:web
+
+      - name: Verify Next.js Standalone Build
+        run: npm run build:web
+
+  desktop-quality:
+    name: Desktop (TypeScript, Vitest, Rust Format & Clippy)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Setup Rust Stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Desktop TypeScript Type Check
+        run: npm run --workspace @interview-ready/desktop tsc --noEmit
+
+      - name: Run Desktop Vitest Suite
+        run: npm run test:desktop
+
+      - name: Build Desktop Frontend
+        run: npm run build:desktop
+
+      - name: Run Cargo Format Check
+        run: cargo fmt --check --manifest-path apps/desktop/src-tauri/Cargo.toml
+
+      - name: Run Cargo Clippy
+        run: cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml -- -D warnings
+
+  security-and-secrets:
+    name: Security & Quality Baseline (Secrets, Migration Dry-Run, Vulnerabilities)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup uv and Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+
+      - name: Install API dependencies
+        working-directory: apps/api
+        run: uv sync --extra dev
+
+      - name: Validate Migration Dry Run (SQL generation)
+        working-directory: apps/api
+        run: uv run alembic upgrade head --sql
+
+      - name: Check for Uncommitted / Accidental Secrets (.env files)
+        run: |
+          echo "Scanning workspace for prohibited .env files..."
+          if find . -maxdepth 3 -name ".env" -o -name ".env.production" -o -name ".env.staging" | grep -v "\.env\.example" | grep -q .; then
+            echo "ERROR: Unsanitized environment file found in repository!"
+            exit 1
+          fi
+          echo "No committed .env files found."
+
+      - name: Audit NPM Production Dependencies
+        run: npm audit --omit=dev --audit-level=critical || true

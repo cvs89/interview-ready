@@ -1,0 +1,35 @@
+apiVersion: run.googleapis.com/v1
+kind: Job
+metadata:
+  name: interview-ready-migrations
+  annotations:
+    run.googleapis.com/description: "One-shot Alembic database schema migration job"
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/execution-environment: gen2
+        run.googleapis.com/cloudsql-instances: "${GCP_PROJECT_ID}:${GCP_REGION}:${CLOUD_SQL_INSTANCE}"
+    spec:
+      taskCount: 1
+      template:
+        spec:
+          serviceAccountName: interview-ready-api-sa@${GCP_PROJECT_ID}.iam.gserviceaccount.com
+          maxRetries: 1
+          timeoutSeconds: 600
+          containers:
+            - image: ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/interview-ready/api:latest
+              command: ["alembic"]
+              args: ["upgrade", "head"]
+              resources:
+                limits:
+                  cpu: "1000m"
+                  memory: "512Mi"
+              env:
+                - name: APP_ENV
+                  value: "production"
+                - name: DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: interview-ready-database-url
+                      key: latest

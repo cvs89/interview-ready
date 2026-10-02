@@ -1,0 +1,61 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: interview-ready-web
+  annotations:
+    run.googleapis.com/ingress: all
+    run.googleapis.com/description: "Interview Ready Next.js 15 Web Application"
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "1"
+        autoscaling.knative.dev/maxScale: "20"
+        run.googleapis.com/cpu-throttling: "true"
+        run.googleapis.com/execution-environment: gen2
+    spec:
+      serviceAccountName: interview-ready-web-sa@${GCP_PROJECT_ID}.iam.gserviceaccount.com
+      containerConcurrency: 100
+      timeoutSeconds: 300
+      containers:
+        - image: ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/interview-ready/web:latest
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "1024Mi"
+          ports:
+            - name: http1
+              containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: NEXT_TELEMETRY_DISABLED
+              value: "1"
+            - name: PORT
+              value: "3000"
+            - name: NEXT_PUBLIC_API_URL
+              value: "https://${CUSTOM_DOMAIN}/api"
+            - name: NEXT_PUBLIC_FIREBASE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: interview-ready-firebase-web-api-key
+                  key: latest
+            - name: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+              value: "${FIREBASE_PROJECT_ID}.firebaseapp.com"
+            - name: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+              value: "${FIREBASE_PROJECT_ID}"
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 2
+            periodSeconds: 5
+            failureThreshold: 6
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            periodSeconds: 15
+            failureThreshold: 3
+            timeoutSeconds: 3
