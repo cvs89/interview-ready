@@ -81,13 +81,25 @@ jobs:
           echo "IMAGE_TAG=${TAG}" >> "$GITHUB_OUTPUT"
 
       - name: Authenticate to Google Cloud
+        id: gcp-auth
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+        run: |
+          if [ -z "$GCP_SA_KEY" ]; then
+            echo "GCP_SA_KEY not configured. Skipping container push to Google Cloud."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Authenticate with GCP Credentials
+        if: steps.gcp-auth.outputs.skip == 'false'
         uses: google-github-actions/auth@v2
-        if: ${{ env.GCP_PROJECT_ID != '' && secrets.GCP_SA_KEY != '' }}
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Configure Docker for Artifact Registry
-        if: ${{ env.GCP_PROJECT_ID != '' && secrets.GCP_SA_KEY != '' }}
+        if: steps.gcp-auth.outputs.skip == 'false'
         run: |
           gcloud auth configure-docker "${{ env.GCP_REGION }}-docker.pkg.dev" --quiet
 
@@ -109,7 +121,7 @@ jobs:
             -f apps/web/Dockerfile apps/web
 
       - name: Push Container Images to Artifact Registry
-        if: ${{ env.GCP_PROJECT_ID != '' && secrets.GCP_SA_KEY != '' }}
+        if: steps.gcp-auth.outputs.skip == 'false'
         run: |
           docker push "${{ env.ARTIFACT_REGISTRY }}/api:${{ steps.set-tag.outputs.IMAGE_TAG }}"
           docker push "${{ env.ARTIFACT_REGISTRY }}/api:latest"
@@ -120,14 +132,27 @@ jobs:
     name: Execute Single-Run Database Migration
     needs: [build-and-push]
     runs-on: ubuntu-latest
-    if: ${{ env.GCP_PROJECT_ID != '' && secrets.GCP_SA_KEY != '' }}
     steps:
+      - name: Check GCP Configuration
+        id: check-gcp
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+        run: |
+          if [ -z "$GCP_SA_KEY" ]; then
+            echo "GCP_SA_KEY not set. Skipping Cloud Run migration job."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Authenticate to Google Cloud
+        if: steps.check-gcp.outputs.skip == 'false'
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Execute Cloud Run Migration Job
+        if: steps.check-gcp.outputs.skip == 'false'
         run: |
           gcloud run jobs execute interview-ready-migrations \
             --region "${{ env.GCP_REGION }}" \
@@ -137,40 +162,44 @@ jobs:
     name: Deploy Cloud Run & Firebase Hosting
     needs: [build-and-push, run-migrations]
     runs-on: ubuntu-latest
-    if: ${{ env.GCP_PROJECT_ID != '' && secrets.GCP_SA_KEY != '' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Check GCP Configuration
+        id: check-gcp
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+        run: |
+          if [ -z "$GCP_SA_KEY" ]; then
+            echo "GCP_SA_KEY not set. Skipping Cloud Run service deployment."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Authenticate to Google Cloud
+        if: steps.check-gcp.outputs.skip == 'false'
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Deploy API Service to Cloud Run
+        if: steps.check-gcp.outputs.skip == 'false'
         run: |
           gcloud run services update interview-ready-api \
             --image "${{ env.ARTIFACT_REGISTRY }}/api:${{ needs.build-and-push.outputs.image_tag }}" \
             --region "${{ env.GCP_REGION }}"
 
       - name: Deploy Web Service to Cloud Run
+        if: steps.check-gcp.outputs.skip == 'false'
         run: |
           gcloud run services update interview-ready-web \
             --image "${{ env.ARTIFACT_REGISTRY }}/web:${{ needs.build-and-push.outputs.image_tag }}" \
             --region "${{ env.GCP_REGION }}"
 
-      - name: Setup Node.js for Firebase CLI
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Deploy Firebase Hosting Configuration
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        run: |
-          npx firebase-tools deploy --only hosting --project "${{ env.GCP_PROJECT_ID }}" --token "${{ secrets.FIREBASE_TOKEN }}"
-
       - name: Post-Deployment Smoke Tests
+        if: steps.check-gcp.outputs.skip == 'false'
         run: |
           echo "Running post-deployment smoke tests..."
           API_URL="$(gcloud run services describe interview-ready-api --region "${{ env.GCP_REGION }}" --format='value(status.url)')"
@@ -185,7 +214,6 @@ jobs:
     name: Deploy Firebase Hosting (Edge CDN)
     needs: quality-gate
     runs-on: ubuntu-latest
-    if: ${{ secrets.FIREBASE_TOKEN != '' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -199,7 +227,11 @@ jobs:
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
-          npx -y firebase-tools@latest deploy --only hosting --project "${{ env.GCP_PROJECT_ID }}" --token "${{ secrets.FIREBASE_TOKEN }}"
+          if [ -z "$FIREBASE_TOKEN" ]; then
+            echo "FIREBASE_TOKEN secret not configured. Skipping Firebase edge deploy."
+            exit 0
+          fi
+          npx -y firebase-tools@latest deploy --only hosting --project "${{ env.GCP_PROJECT_ID }}" --token "$FIREBASE_TOKEN"
 
   desktop-release-guard:
     name: Desktop Release Guard (Signing & Notarization Verification)
