@@ -25,8 +25,7 @@ COPY --from=ghcr.io/astral-sh/uv:0.5.24 /uv /bin/uv
 COPY pyproject.toml uv.lock* ./
 
 # Install production dependencies into a standalone venv
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv venv /opt/venv && \
+RUN uv venv /opt/venv && \
     VIRTUAL_ENV=/opt/venv uv pip install --no-dev -r pyproject.toml
 
 # ------------------------------------------------------------------------------
