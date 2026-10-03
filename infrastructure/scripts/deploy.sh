@@ -26,7 +26,7 @@ docker push "${IMAGE_REGISTRY}/api:latest"
 
 # 2. Build and push Next.js Web Docker image
 echo "📦 Building and pushing Next.js Web Docker image..."
-docker build -t "${WEB_IMAGE}" -t "${IMAGE_REGISTRY}/web:latest" -f apps/web/Dockerfile .
+docker build -t "${WEB_IMAGE}" -t "${IMAGE_REGISTRY}/web:latest" -f Dockerfile.web .
 docker push "${WEB_IMAGE}"
 docker push "${IMAGE_REGISTRY}/web:latest"
 

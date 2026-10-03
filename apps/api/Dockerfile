@@ -17,15 +17,17 @@ RUN apt-get update && \
         curl && \
     rm -rf /var/lib/apt/lists/*
 
-# Install uv for fast, reliable deterministic builds
-COPY --from=ghcr.io/astral-sh/uv:0.5.24 /uv /bin/uv
+# Install uv (must be new enough to read uv.lock "revision = 3")
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 # Copy dependency specifications first for optimal layer caching
-COPY pyproject.toml uv.lock* ./
+COPY pyproject.toml uv.lock ./
 
-# Install production dependencies into a standalone venv
-RUN uv venv /opt/venv && \
-    VIRTUAL_ENV=/opt/venv uv pip install --no-dev -r pyproject.toml
+# Install locked production dependencies (no dev extras) into /opt/venv
+ENV UV_PROJECT_ENVIRONMENT=/opt/venv \
+    UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy
+RUN uv sync --frozen --no-dev --no-install-project
 
 # ------------------------------------------------------------------------------
 # Stage 2: Minimal, secure production runtime
