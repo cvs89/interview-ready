@@ -1,9 +1,5 @@
 {
   "$schema": "https://raw.githubusercontent.com/firebase/firebase-tools/master/schema/firebase-config.json",
-  "apphosting": {
-    "backendId": "interview-ready",
-    "rootDir": "apps/web"
-  },
   "hosting": {
     "public": "apps/web/public",
     "ignore": [
@@ -60,8 +56,18 @@
     ],
     "rewrites": [
       {
+        "source": "/api/**",
+        "run": {
+          "serviceId": "interview-ready-api",
+          "region": "us-central1"
+        }
+      },
+      {
         "source": "**",
-        "destination": "/index.html"
+        "run": {
+          "serviceId": "interview-ready-web",
+          "region": "us-central1"
+        }
       }
     ]
   }
