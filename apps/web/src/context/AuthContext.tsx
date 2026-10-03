@@ -56,15 +56,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [api]);
 
   useEffect(() => {
-    const unsubscribe = onIdTokenChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        await fetchApiUser();
-      } else {
-        setApiUser(null);
+    const unsubscribe = onIdTokenChanged(
+      auth,
+      async (currentUser) => {
+        setUser(currentUser);
+        if (currentUser) {
+          await fetchApiUser();
+        } else {
+          setApiUser(null);
+        }
+        setLoading(false);
+      },
+      (error) => {
+        console.warn("Firebase Auth status:", error.message);
+        setLoading(false);
       }
-      setLoading(false);
-    });
+    );
 
     return () => unsubscribe();
   }, [fetchApiUser]);
