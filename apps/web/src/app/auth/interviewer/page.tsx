@@ -56,64 +56,64 @@ export default function InterviewerAuthPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-gray-50 via-white to-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-4rem)] bg-[#FFF8F0] py-12 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-5xl">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Column: Value Proposition */}
           <div className="lg:col-span-7 space-y-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1 text-xs font-semibold text-blue-700">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#ECC2A4] bg-[#FDF5EE] px-3.5 py-1 text-xs font-semibold text-[#9B3B25]">
               <Briefcase className="h-4 w-4" />
               <span>Interviewer Network</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
+            <h1 className="font-serif text-3xl sm:text-5xl font-normal text-[#342523] tracking-tight leading-tight">
               Conduct mock interviews. <br />
-              <span className="text-blue-600">Mentor the next generation & earn.</span>
+              <span className="text-[#9B3B25]">Mentor the next generation & earn.</span>
             </h1>
 
-            <p className="text-lg text-gray-600 leading-relaxed">
+            <p className="text-base sm:text-lg text-[#6E5652] leading-relaxed">
               Join our curated network of senior engineers, tech leads, and hiring managers.
               Help ambitious candidates crack their dream tech interviews while setting your own rates and schedule.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <div className="flex items-start gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-700">
+              <div className="flex items-start gap-3.5 rounded-[20px] border border-[#EADBCE] bg-white p-4 shadow-sm">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F8DDC9] text-[#9B3B25]">
                   <DollarSign className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 text-sm">Set Your Own Rates</h4>
-                  <p className="text-xs text-gray-500 mt-0.5">Keep 100% control over your slot pricing in your local currency.</p>
+                  <h4 className="font-medium text-[#342523] text-sm">Set Your Own Rates</h4>
+                  <p className="text-xs text-[#6E5652] mt-0.5">Keep 100% control over your slot pricing in your local currency.</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-100 text-purple-700">
+              <div className="flex items-start gap-3.5 rounded-[20px] border border-[#EADBCE] bg-white p-4 shadow-sm">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FDF5EE] text-[#9B3B25]">
                   <Sparkles className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 text-sm">Flexible Calendar</h4>
-                  <p className="text-xs text-gray-500 mt-0.5">Publish availability slots when you have free time.</p>
+                  <h4 className="font-medium text-[#342523] text-sm">Flexible Calendar</h4>
+                  <p className="text-xs text-[#6E5652] mt-0.5">Publish availability slots when you have free time.</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
+              <div className="flex items-start gap-3.5 rounded-[20px] border border-[#EADBCE] bg-white p-4 shadow-sm">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E8F4EC] text-[#2C6E49]">
                   <ShieldCheck className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 text-sm">Verified Expert Badge</h4>
-                  <p className="text-xs text-gray-500 mt-0.5">Stand out on the marketplace after peer credentials verification.</p>
+                  <h4 className="font-medium text-[#342523] text-sm">Verified Expert Badge</h4>
+                  <p className="text-xs text-[#6E5652] mt-0.5">Stand out on the marketplace after peer credentials verification.</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+              <div className="flex items-start gap-3.5 rounded-[20px] border border-[#EADBCE] bg-white p-4 shadow-sm">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FEF3E2] text-[#A65E00]">
                   <CheckCircle2 className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 text-sm">Built-in WebRTC & IDE</h4>
-                  <p className="text-xs text-gray-500 mt-0.5">Seamless live video and collaborative workspace ready to go.</p>
+                  <h4 className="font-medium text-[#342523] text-sm">Built-in WebRTC & IDE</h4>
+                  <p className="text-xs text-[#6E5652] mt-0.5">Seamless live video and collaborative workspace ready to go.</p>
                 </div>
               </div>
             </div>
@@ -121,15 +121,15 @@ export default function InterviewerAuthPage() {
 
           {/* Right Column: Auth Card */}
           <div className="lg:col-span-5">
-            <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
-              <div className="flex border-b border-gray-100 pb-4 mb-6">
+            <div className="rounded-[24px] border border-[#EADBCE] bg-white p-8 shadow-sm">
+              <div className="flex border-b border-[#EADBCE] pb-3 mb-6">
                 <button
                   type="button"
                   onClick={() => setMode("register")}
                   className={`flex-1 text-center pb-2 text-sm font-semibold transition border-b-2 ${
                     mode === "register"
-                      ? "border-blue-600 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700"
+                      ? "border-[#9B3B25] text-[#9B3B25]"
+                      : "border-transparent text-[#6E5652] hover:text-[#342523]"
                   }`}
                 >
                   Apply as Interviewer
@@ -139,8 +139,8 @@ export default function InterviewerAuthPage() {
                   onClick={() => setMode("login")}
                   className={`flex-1 text-center pb-2 text-sm font-semibold transition border-b-2 ${
                     mode === "login"
-                      ? "border-blue-600 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700"
+                      ? "border-[#9B3B25] text-[#9B3B25]"
+                      : "border-transparent text-[#6E5652] hover:text-[#342523]"
                   }`}
                 >
                   Interviewer Sign In
@@ -148,8 +148,8 @@ export default function InterviewerAuthPage() {
               </div>
 
               {error && (
-                <div className="mb-6 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800" role="alert">
-                  <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
+                <div className="mb-6 flex items-center gap-2 rounded-2xl border border-red-200 bg-[#FCEBEB] p-3 text-sm text-[#9E2A2B]" role="alert">
+                  <AlertCircle className="h-4 w-4 shrink-0 text-[#9E2A2B]" />
                   <span>{error}</span>
                 </div>
               )}
@@ -159,7 +159,7 @@ export default function InterviewerAuthPage() {
                 type="button"
                 onClick={handleGoogleAuth}
                 disabled={loading}
-                className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition disabled:opacity-50"
+                className="flex w-full items-center justify-center gap-3 rounded-full border border-[#EADBCE] bg-white px-4 py-2.5 text-sm font-medium text-[#342523] shadow-sm hover:bg-[#FDF5EE] transition disabled:opacity-50"
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path
@@ -184,10 +184,10 @@ export default function InterviewerAuthPage() {
 
               <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200" />
+                  <div className="w-full border-t border-[#EADBCE]" />
                 </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-gray-500">Or with work email</span>
+                <div className="relative flex justify-center text-xs uppercase tracking-wider">
+                  <span className="bg-white px-3 text-[#96817D]">Or with work email</span>
                 </div>
               </div>
 
@@ -195,7 +195,7 @@ export default function InterviewerAuthPage() {
               <form onSubmit={handleEmailAuth} className="space-y-4">
                 {mode === "register" && (
                   <div>
-                    <label className="block text-xs font-semibold uppercase text-gray-700 mb-1">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#6E5652] mb-1.5">
                       Full Name
                     </label>
                     <input
@@ -204,13 +204,13 @@ export default function InterviewerAuthPage() {
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       placeholder="Jane Doe"
-                      className="w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="w-full rounded-xl border border-[#EADBCE] bg-[#FFFDFB] px-3.5 py-2.5 text-sm text-[#342523] placeholder-[#96817D] focus:border-[#9B3B25] focus:outline-none focus:ring-1 focus:ring-[#9B3B25]"
                     />
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-xs font-semibold uppercase text-gray-700 mb-1">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#6E5652] mb-1.5">
                     Work Email
                   </label>
                   <input
@@ -219,12 +219,12 @@ export default function InterviewerAuthPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@company.com"
-                    className="w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-xl border border-[#EADBCE] bg-[#FFFDFB] px-3.5 py-2.5 text-sm text-[#342523] placeholder-[#96817D] focus:border-[#9B3B25] focus:outline-none focus:ring-1 focus:ring-[#9B3B25]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold uppercase text-gray-700 mb-1">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#6E5652] mb-1.5">
                     Password
                   </label>
                   <input
@@ -234,14 +234,14 @@ export default function InterviewerAuthPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-xl border border-[#EADBCE] bg-[#FFFDFB] px-3.5 py-2.5 text-sm text-[#342523] placeholder-[#96817D] focus:border-[#9B3B25] focus:outline-none focus:ring-1 focus:ring-[#9B3B25]"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-blue-700 transition disabled:opacity-50"
+                  className="w-full mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-[#9B3B25] px-6 py-3 text-sm font-medium text-white shadow hover:bg-[#83321F] active:bg-[#6D2919] transition disabled:opacity-50"
                 >
                   {loading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -256,10 +256,10 @@ export default function InterviewerAuthPage() {
                 </button>
               </form>
 
-              <div className="mt-6 border-t border-gray-100 pt-4 text-center">
-                <p className="text-xs text-gray-500">
+              <div className="mt-6 border-t border-[#EADBCE] pt-4 text-center">
+                <p className="text-xs text-[#6E5652]">
                   Looking for mock interviews as a candidate?{" "}
-                  <Link href="/auth/sign-in" className="text-blue-600 font-medium hover:underline">
+                  <Link href="/auth/sign-in" className="text-[#9B3B25] font-medium hover:underline">
                     Candidate Sign In
                   </Link>
                 </p>

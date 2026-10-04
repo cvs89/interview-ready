@@ -10,40 +10,65 @@ interface InterviewerCardProps {
 }
 
 export function InterviewerCard({ profile }: InterviewerCardProps) {
+  const initials = profile.full_name
+    ? profile.full_name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .substring(0, 2)
+        .toUpperCase()
+    : "IR";
+
   return (
-    <div className="flex flex-col justify-between rounded-xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition">
+    <div className="card-confidence card-confidence-interactive flex flex-col justify-between p-6 sm:p-7">
       <div>
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <div>
-            <div className="flex items-center gap-1.5">
-              <h3 className="font-bold text-lg text-gray-900">{profile.full_name}</h3>
-              {profile.is_verified && (
-                <span title="Verified Interviewer">
-                  <CheckCircle2 className="h-4 w-4 text-blue-600 fill-blue-50" />
-                </span>
-              )}
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#F8DDC9] text-[#9B3B25] font-editorial font-bold text-lg border border-[#ECC2A4]">
+              {initials}
             </div>
-            <p className="text-sm font-medium text-gray-600">{profile.title || "Technical Interviewer"}</p>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <h3 className="font-editorial font-bold text-lg text-[#342523]">
+                  {profile.full_name}
+                </h3>
+              </div>
+              <p className="text-xs sm:text-sm font-medium text-[#6E5652]">
+                {profile.title || "Technical Interviewer"}
+              </p>
+            </div>
           </div>
+
           {profile.default_rate_minor !== null && profile.default_rate_minor !== undefined && (
-            <div className="text-right">
-              <span className="text-xs text-gray-500 block">Rate from</span>
-              <span className="font-bold text-gray-900 text-base">
+            <div className="text-right shrink-0">
+              <span className="text-[11px] font-medium uppercase tracking-wider text-[#96817D] block">
+                Session
+              </span>
+              <span className="font-editorial font-bold text-[#9B3B25] text-lg sm:text-xl">
                 {formatCurrency(profile.default_rate_minor, profile.currency || "INR")}
               </span>
             </div>
           )}
         </div>
 
+        {profile.is_verified && (
+          <div className="mb-3">
+            <span className="badge-confidence-approved">
+              <CheckCircle2 className="h-3.5 w-3.5 text-[#9B3B25]" />
+              Platform-approved interviewer
+            </span>
+          </div>
+        )}
+
         {profile.years_experience !== null && profile.years_experience !== undefined && (
-          <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-3">
-            <Briefcase className="h-3.5 w-3.5 text-gray-400" />
-            <span>{profile.years_experience} years industry experience</span>
+          <div className="flex items-center gap-1.5 text-xs text-[#6E5652] mb-3">
+            <Briefcase className="h-3.5 w-3.5 text-[#9B3B25]" />
+            <span>{profile.years_experience} years engineering experience</span>
           </div>
         )}
 
         {profile.bio && (
-          <p className="text-sm text-gray-600 line-clamp-3 mb-4 leading-relaxed">
+          <p className="text-sm text-[#4E3936] line-clamp-3 mb-4 leading-relaxed font-sans">
             {profile.bio}
           </p>
         )}
@@ -53,9 +78,9 @@ export function InterviewerCard({ profile }: InterviewerCardProps) {
             {profile.skills.map((s) => (
               <span
                 key={s.id}
-                className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700"
+                className="inline-flex items-center gap-1 rounded-full bg-[#FDF5EE] border border-[#ECC2A4] px-2.5 py-0.5 text-xs font-medium text-[#342523]"
               >
-                <Award className="h-3 w-3" />
+                <Award className="h-3 w-3 text-[#9B3B25]" />
                 {s.name}
               </span>
             ))}
@@ -63,13 +88,13 @@ export function InterviewerCard({ profile }: InterviewerCardProps) {
         )}
       </div>
 
-      <div className="border-t border-gray-100 pt-4 mt-auto">
+      <div className="border-t border-[#EADBCE] pt-4 mt-auto">
         <Link
           href={`/interviewers/${profile.id}`}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition"
+          className="btn-pill-primary w-full gap-2 py-2.5 text-sm"
         >
           <Calendar className="h-4 w-4" />
-          View Availability & Book
+          View Available Times →
         </Link>
       </div>
     </div>

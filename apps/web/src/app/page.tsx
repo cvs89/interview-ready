@@ -1,105 +1,241 @@
-import { Award, Briefcase, ChevronRight, ShieldCheck, Video, Zap } from "lucide-react";
+import {
+  Award,
+  Briefcase,
+  ChevronRight,
+  Clock,
+  Laptop,
+  ShieldCheck,
+  Zap,
+} from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-[#FFF8F0] min-h-screen text-[#342523]">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-blue-50/50 via-white to-gray-50 py-20 sm:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-4 py-1.5 text-xs font-semibold text-blue-700">
-            <Video className="h-4 w-4" />
-            <span>Interview Ready Marketplace</span>
+      <section className="relative overflow-hidden py-16 sm:py-28 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl text-center">
+          {/* Eyebrow */}
+          <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-[#ECC2A4] bg-[#FDF5EE] px-4 py-1.5 text-xs font-semibold text-[#9B3B25] shadow-xs">
+            <span className="flex h-2 w-2 rounded-full bg-[#9B3B25]" />
+            <span>Real people. Useful practice.</span>
           </div>
 
-          <h1 className="mx-auto max-w-4xl font-extrabold text-4xl sm:text-6xl text-gray-900 tracking-tight leading-tight">
-            Practice real technical mock interviews with vetted tech leaders.
+          <h1 className="font-editorial text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#342523] leading-[1.12]">
+            Big ambitions. A little more practice.
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-600 leading-relaxed">
-            Boost your interview performance. Book 1-on-1 system design, coding, and behavioral mock interviews with principal engineers and hiring managers.
+          <h2 className="font-editorial text-xl sm:text-2xl lg:text-3xl font-medium text-[#9B3B25] mt-4 max-w-3xl mx-auto leading-snug">
+            Practice real technical mock interviews with vetted engineering leaders.
+          </h2>
+
+          <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg text-[#6E5652] leading-relaxed font-sans">
+            Real interview practice. Specific feedback. A clearer next step. Book 1-on-1 system design, coding, and behavioral sessions with principal engineers and hiring managers.
           </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/marketplace"
-              className="flex items-center gap-2 rounded-xl bg-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition"
+              className="btn-pill-primary px-8 py-3.5 text-base shadow-md w-full sm:w-auto"
             >
-              Explore Interviewers
-              <ChevronRight className="h-5 w-5" />
+              <span>Find an Interviewer</span>
+              <ChevronRight className="h-5 w-5 ml-1" />
             </Link>
             <Link
-              href="/auth/sign-up"
-              className="rounded-xl border border-gray-300 bg-white px-8 py-3.5 text-base font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition"
+              href="/auth/interviewer"
+              className="btn-pill-secondary px-8 py-3.5 text-base w-full sm:w-auto"
             >
-              Get Started Free
+              Become an Interviewer
             </Link>
+          </div>
+
+          <p className="mt-4 text-xs font-medium text-[#96817D]">
+            Choose a specific time · See the session price upfront · Real-money booking without subscription locks
+          </p>
+        </div>
+      </section>
+
+      {/* 4-Step Journey Section */}
+      <section className="py-16 sm:py-24 bg-white border-y border-[#EADBCE]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#9B3B25]">
+              How It Works
+            </span>
+            <h2 className="font-editorial text-3xl sm:text-4xl font-bold text-[#342523] mt-2">
+              Four steps from booking to breakthrough.
+            </h2>
+            <p className="text-[#6E5652] text-sm sm:text-base mt-3">
+              Clear expectations, zero guesswork. Everything you need to prepare under realistic conditions.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="card-confidence p-6 sm:p-7 bg-[#FFFDFB]">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#F8DDC9] text-[#9B3B25] font-editorial font-bold text-lg mb-5 border border-[#ECC2A4]">
+                1
+              </div>
+              <h3 className="font-editorial font-bold text-xl text-[#342523] mb-2">Choose an Expert</h3>
+              <p className="text-sm text-[#6E5652] leading-relaxed font-sans">
+                Browse verified technical leaders by primary domain, engineering seniority, hourly pricing, and availability.
+              </p>
+            </div>
+
+            <div className="card-confidence p-6 sm:p-7 bg-[#FFFDFB]">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#F8DDC9] text-[#9B3B25] font-editorial font-bold text-lg mb-5 border border-[#ECC2A4]">
+                2
+              </div>
+              <h3 className="font-editorial font-bold text-xl text-[#342523] mb-2">Reserve Your Slot</h3>
+              <p className="text-sm text-[#6E5652] leading-relaxed font-sans">
+                Hold your preferred time with an atomic 10-minute reservation and checkout securely via Stripe with clear pricing.
+              </p>
+            </div>
+
+            <div className="card-confidence p-6 sm:p-7 bg-[#FFFDFB]">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#F8DDC9] text-[#9B3B25] font-editorial font-bold text-lg mb-5 border border-[#ECC2A4]">
+                3
+              </div>
+              <h3 className="font-editorial font-bold text-xl text-[#342523] mb-2">Practise Live</h3>
+              <p className="text-sm text-[#6E5652] leading-relaxed font-sans">
+                Join through our focused desktop client featuring WebRTC video and real-time coding with zero browser distractions.
+              </p>
+            </div>
+
+            <div className="card-confidence p-6 sm:p-7 bg-[#FFFDFB]">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#F8DDC9] text-[#9B3B25] font-editorial font-bold text-lg mb-5 border border-[#ECC2A4]">
+                4
+              </div>
+              <h3 className="font-editorial font-bold text-xl text-[#342523] mb-2">Specific Feedback</h3>
+              <p className="text-sm text-[#6E5652] leading-relaxed font-sans">
+                Receive granular rubric evaluations, concrete problem-framing scores, and prioritized next steps to improve.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="py-20 bg-white border-t border-gray-100">
+      {/* Why Interview Ready Section */}
+      <section className="py-16 sm:py-24 bg-[#FFF8F0]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900">Why Interview Ready?</h2>
-            <p className="text-gray-600 mt-2">Real-world interview simulations built for engineers.</p>
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#9B3B25]">
+              Core Pillars
+            </span>
+            <h2 className="font-editorial text-3xl sm:text-4xl font-bold text-[#342523] mt-2">
+              Why engineers practise with Interview Ready.
+            </h2>
+            <p className="text-[#6E5652] text-sm sm:text-base mt-3">
+              We focus on human mentorship, authentic company standards, and transparent logistics.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="rounded-2xl border border-gray-200 bg-gray-50/50 p-8">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-600 mb-6">
+            <div className="card-confidence p-8 bg-white">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FDF5EE] text-[#9B3B25] border border-[#ECC2A4] mb-6">
                 <ShieldCheck className="h-6 w-6" />
               </div>
-              <h3 className="font-bold text-xl text-gray-900 mb-2">Vetted Industry Experts</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                All interviewers are rigorously verified with documented years of experience at top technology companies.
+              <h3 className="font-editorial font-bold text-2xl text-[#342523] mb-2.5">
+                Vetted Leaders
+              </h3>
+              <p className="text-sm text-[#6E5652] leading-relaxed font-sans">
+                All interviewers complete manual credential review, LinkedIn profile verification, and background audits before opening public slots.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-gray-200 bg-gray-50/50 p-8">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-600 mb-6">
+            <div className="card-confidence p-8 bg-white">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FDF5EE] text-[#9B3B25] border border-[#ECC2A4] mb-6">
                 <Zap className="h-6 w-6" />
               </div>
-              <h3 className="font-bold text-xl text-gray-900 mb-2">Instant Slot Reservations</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Lock in your session with transaction-safe 10-minute temporary slot holds and transparent real-money pricing.
+              <h3 className="font-editorial font-bold text-2xl text-[#342523] mb-2.5">
+                Guaranteed Slots
+              </h3>
+              <p className="text-sm text-[#6E5652] leading-relaxed font-sans">
+                Never worry about double bookings or calendar collisions. Database concurrency locks ensure you only pay for confirmed, available time.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-gray-200 bg-gray-50/50 p-8">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-600 mb-6">
+            <div className="card-confidence p-8 bg-white">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FDF5EE] text-[#9B3B25] border border-[#ECC2A4] mb-6">
                 <Award className="h-6 w-6" />
               </div>
-              <h3 className="font-bold text-xl text-gray-900 mb-2">Actionable Rubric & Feedback</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Receive structured evaluations, coding rubric breakdowns, and personalized improvement roadmaps after each call.
+              <h3 className="font-editorial font-bold text-2xl text-[#342523] mb-2.5">
+                Actionable Rubrics
+              </h3>
+              <p className="text-sm text-[#6E5652] leading-relaxed font-sans">
+                Get more than a generic thumbs-up. Detailed assessments cover system architecture, trade-off analysis, code cleanliness, and clarity.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Become an Interviewer Section */}
-      <section className="py-16 bg-gradient-to-r from-blue-900 to-indigo-900 text-white">
+      {/* For Interviewers Section */}
+      <section className="py-16 sm:py-20 bg-[#9B3B25] text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-800/80 px-3 py-1 text-xs font-semibold text-blue-200 mb-3 border border-blue-700">
-              <Briefcase className="h-3.5 w-3.5" /> For Experienced Engineers
+          <div className="max-w-2xl">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#83321F] px-3.5 py-1 text-xs font-semibold text-[#F8DDC9] mb-3 border border-[#ECC2A4]/30">
+              <Briefcase className="h-3.5 w-3.5" /> For Experienced Staff & Principal Engineers
             </span>
-            <h2 className="text-2xl sm:text-3xl font-bold">Are you an experienced technical interviewer?</h2>
-            <p className="mt-2 text-blue-200 max-w-2xl text-sm sm:text-base">
-              Monetize your expertise on your own schedule. Set your hourly pricing, publish availability, and mentor candidates aiming for top tech tiers.
+            <h2 className="font-editorial text-3xl sm:text-4xl font-bold leading-tight">
+              Are you an experienced technical interviewer?
+            </h2>
+            <p className="mt-3 text-[#F8DDC9] text-sm sm:text-base leading-relaxed font-sans">
+              Monetize your mentorship on your terms. Set your hourly rate, publish your calendar, and guide ambitious engineers through realistic mock evaluations.
             </p>
           </div>
           <Link
             href="/auth/interviewer"
-            className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-blue-900 shadow hover:bg-blue-50 transition"
+            className="shrink-0 btn-pill-secondary bg-white text-[#9B3B25] border-transparent hover:bg-[#FDF5EE] px-8 py-3.5 text-base font-bold shadow-lg"
           >
-            <span>Apply as an Interviewer</span>
-            <ChevronRight className="h-4 w-4" />
+            Apply as an Interviewer →
           </Link>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-16 sm:py-24 bg-[#FFF8F0]">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#9B3B25]">
+              Common Questions
+            </span>
+            <h2 className="font-editorial text-3xl sm:text-4xl font-bold text-[#342523] mt-2">
+              Everything you need to know.
+            </h2>
+          </div>
+
+          <div className="space-y-4">
+            <div className="card-confidence p-6 bg-white">
+              <h3 className="font-editorial font-bold text-lg text-[#342523] mb-2 flex items-center gap-2">
+                <Laptop className="h-4 w-4 text-[#9B3B25]" />
+                Why does the live interview require a desktop application?
+              </h3>
+              <p className="text-sm text-[#6E5652] leading-relaxed font-sans">
+                The desktop client provides high-fidelity low-latency audio/video, a native code editor scratchpad, and hardware isolation that prevents browser tab slowdowns during intense practice sessions.
+              </p>
+            </div>
+
+            <div className="card-confidence p-6 bg-white">
+              <h3 className="font-editorial font-bold text-lg text-[#342523] mb-2 flex items-center gap-2">
+                <Clock className="h-4 w-4 text-[#9B3B25]" />
+                When does the interview room open?
+              </h3>
+              <p className="text-sm text-[#6E5652] leading-relaxed font-sans">
+                The join room button opens 10 minutes prior to your scheduled session so you can test your camera and microphone. It remains active with a 30-minute grace window.
+              </p>
+            </div>
+
+            <div className="card-confidence p-6 bg-white">
+              <h3 className="font-editorial font-bold text-lg text-[#342523] mb-2 flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-[#9B3B25]" />
+                Who can see the interviewer’s private notes?
+              </h3>
+              <p className="text-sm text-[#6E5652] leading-relaxed font-sans">
+                Only the interviewer has access to their raw scratchpad notes during the session. After the interview, candidates receive the finalized structured rubric breakdown and actionable feedback summary.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
     </div>

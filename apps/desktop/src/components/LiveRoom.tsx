@@ -64,33 +64,35 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
 
   return (
     <div
-      className="flex h-screen w-screen flex-col bg-[#060d17] text-white overflow-hidden"
+      className="flex h-screen w-screen flex-col bg-[#FFF8F0] text-[#342523] overflow-hidden font-sans"
       data-testid="live-interview-room"
       data-role={session.role}
     >
       {/* Top Session Header */}
-      <header className="flex h-14 shrink-0 items-center justify-between border-b border-gray-800/80 bg-[#091424] px-6">
+      <header className="flex h-14 shrink-0 items-center justify-between border-b border-[#EADBCE] bg-[#FFFDFB] px-6 shadow-xs">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <span
               className={`h-2.5 w-2.5 rounded-full ${
                 connectionStatus === "connected"
-                  ? "bg-green-500 animate-pulse"
+                  ? "bg-[#2C6E49] animate-pulse"
                   : connectionStatus === "reconnecting"
-                    ? "bg-amber-500 animate-ping"
-                    : "bg-red-500"
+                    ? "bg-[#A65E00] animate-ping"
+                    : "bg-[#9E2A2B]"
               }`}
             />
-            <span className="font-bold text-sm text-gray-200">
-              LiveKit Room: <span className="font-mono text-gray-400">{session.room_name}</span>
+            <span className="font-medium text-xs sm:text-sm text-[#342523]">
+              LiveKit Room: <span className="font-mono text-[#6E5652]">{session.room_name}</span>
             </span>
           </div>
 
-          <span className="text-gray-600">|</span>
+          <span className="text-[#EADBCE]">|</span>
 
           <span
-            className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-bold uppercase tracking-wider ${
-              isInterviewer ? "bg-purple-900/60 text-purple-300" : "bg-blue-900/60 text-blue-300"
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider ${
+              isInterviewer
+                ? "bg-[#F8DDC9] text-[#9B3B25] border border-[#ECC2A4]"
+                : "bg-[#FBF2ED] text-[#9B3B25] border border-[#EADBCE]"
             }`}
           >
             <Shield className="h-3 w-3" />
@@ -101,17 +103,17 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
         {/* Connection status banner */}
         <div className="flex items-center gap-3">
           {connectionStatus === "connected" ? (
-            <span className="flex items-center gap-1.5 text-xs text-green-400 font-medium">
+            <span className="flex items-center gap-1.5 rounded-full bg-[#E8F4EC] border border-[#C2E0CC] px-2.5 py-0.5 text-xs text-[#2C6E49] font-medium">
               <Wifi className="h-3.5 w-3.5" />
               WebRTC Connected
             </span>
           ) : connectionStatus === "reconnecting" ? (
-            <span className="flex items-center gap-1.5 text-xs text-amber-400 font-medium animate-pulse">
+            <span className="flex items-center gap-1.5 rounded-full bg-[#FEF3E2] border border-[#ECC2A4] px-2.5 py-0.5 text-xs text-[#A65E00] font-medium animate-pulse">
               <RefreshCw className="h-3.5 w-3.5 animate-spin" />
               Reconnecting to media server...
             </span>
           ) : (
-            <span className="flex items-center gap-1.5 text-xs text-red-400 font-medium">
+            <span className="flex items-center gap-1.5 rounded-full bg-[#FCEBEB] border border-[#F5C2C2] px-2.5 py-0.5 text-xs text-[#9E2A2B] font-medium">
               <WifiOff className="h-3.5 w-3.5" />
               Disconnected
             </span>
@@ -120,7 +122,7 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
           <button
             onClick={handleSimulateReconnect}
             title="Reconnect LiveKit connection"
-            className="rounded p-1 text-gray-400 hover:bg-gray-800 hover:text-white transition"
+            className="rounded-full p-1.5 text-[#6E5652] hover:bg-[#F8DDC9]/50 hover:text-[#342523] transition cursor-pointer"
           >
             <RefreshCw className="h-3.5 w-3.5" />
           </button>
@@ -131,60 +133,64 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
       <main className="flex flex-1 overflow-hidden">
         {/* Left Column: Video Area */}
         <section
-          className={`flex flex-col justify-between p-4 bg-[#08111f] ${
-            isInterviewer ? "w-2/5 border-r border-gray-800/80" : "w-full lg:w-3/5"
+          className={`flex flex-col justify-between p-4 bg-[#1E1715] ${
+            isInterviewer ? "w-2/5 border-r border-[#342523]" : "w-full lg:w-3/5"
           }`}
           data-testid="video-area-column"
         >
           {/* Video Grid */}
           <div className="grid flex-1 grid-cols-1 gap-4 overflow-y-auto">
             {/* Remote Participant Tile */}
-            <div className="relative flex aspect-video w-full items-center justify-center rounded-2xl border border-gray-800 bg-gray-950 shadow-inner overflow-hidden">
-              <div className="flex flex-col items-center gap-2 text-center text-gray-500">
-                <Users className="h-12 w-12 text-gray-600" />
-                <span className="text-sm font-semibold text-gray-400">
+            <div className="relative flex aspect-video w-full items-center justify-center rounded-[20px] border border-[#3A2D2A] bg-[#140E0C] shadow-inner overflow-hidden">
+              <div className="flex flex-col items-center gap-2 text-center text-[#96817D]">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#2A201D] text-[#F8DDC9]">
+                  <Users className="h-8 w-8" />
+                </div>
+                <span className="text-sm font-semibold text-[#FBF2ED]">
                   {isInterviewer ? "Candidate Video Stream" : "Interviewer Video Stream"}
                 </span>
-                <span className="text-xs text-gray-600">Audio/Video Active • 1080p</span>
+                <span className="text-xs text-[#96817D]">Audio/Video Active • 1080p</span>
               </div>
 
               {/* Remote Badges */}
-              <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-lg bg-black/60 px-2.5 py-1 text-xs text-white backdrop-blur-md">
-                <span className="h-2 w-2 rounded-full bg-green-500" />
+              <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-black/70 px-3 py-1 text-xs text-white backdrop-blur-md">
+                <span className="h-2 w-2 rounded-full bg-[#2C6E49]" />
                 <span>{isInterviewer ? "Candidate" : "Interviewer"}</span>
               </div>
             </div>
 
             {/* Local Participant Tile */}
-            <div className="relative flex h-44 w-full items-center justify-center rounded-2xl border border-gray-800 bg-gray-950 shadow-inner overflow-hidden">
+            <div className="relative flex h-44 w-full items-center justify-center rounded-[20px] border border-[#3A2D2A] bg-[#140E0C] shadow-inner overflow-hidden">
               {isCamOn ? (
-                <div className="flex items-center justify-center h-full w-full bg-gray-900/60 text-gray-400 text-xs">
+                <div className="flex items-center justify-center h-full w-full bg-[#1A1210]/60 text-[#F8DDC9] text-xs">
                   <span>Local Camera Preview Active</span>
                 </div>
               ) : (
-                <div className="flex flex-col items-center gap-1 text-gray-500">
-                  <CameraOff className="h-6 w-6 text-gray-600" />
+                <div className="flex flex-col items-center gap-1.5 text-[#96817D]">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2A201D] text-[#96817D]">
+                    <CameraOff className="h-5 w-5" />
+                  </div>
                   <span className="text-xs">Camera Off</span>
                 </div>
               )}
 
               {/* Local Badges */}
-              <div className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-lg bg-black/60 px-2 py-0.5 text-xs text-white backdrop-blur-md">
+              <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 rounded-full bg-black/70 px-3 py-0.5 text-xs text-white backdrop-blur-md">
                 <span>You ({session.role})</span>
-                {!isMicOn && <MicOff className="h-3 w-3 text-red-400" />}
+                {!isMicOn && <MicOff className="h-3 w-3 text-[#9E2A2B]" />}
               </div>
             </div>
           </div>
 
           {/* Bottom Floating Control Bar */}
-          <div className="mt-4 flex items-center justify-center gap-4 rounded-2xl border border-gray-800/80 bg-[#0d1b2e] py-3 px-6 shadow-xl">
+          <div className="mt-4 flex items-center justify-center gap-4 rounded-full border border-[#44332F] bg-[#2A201D]/90 py-2.5 px-6 shadow-xl backdrop-blur-md">
             <button
               onClick={() => setIsMicOn(!isMicOn)}
               aria-label={isMicOn ? "Mute" : "Unmute"}
-              className={`flex h-11 w-11 items-center justify-center rounded-xl transition ${
+              className={`flex h-11 w-11 items-center justify-center rounded-full transition cursor-pointer ${
                 isMicOn
-                  ? "bg-gray-800 text-white hover:bg-gray-700"
-                  : "bg-red-600 text-white hover:bg-red-500"
+                  ? "bg-[#3D2E2A] text-[#F8DDC9] hover:bg-[#4E3B36]"
+                  : "bg-[#9E2A2B] text-white hover:bg-[#B33132]"
               }`}
               data-testid="room-toggle-mic"
             >
@@ -194,10 +200,10 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
             <button
               onClick={() => setIsCamOn(!isCamOn)}
               aria-label={isCamOn ? "Stop Video" : "Start Video"}
-              className={`flex h-11 w-11 items-center justify-center rounded-xl transition ${
+              className={`flex h-11 w-11 items-center justify-center rounded-full transition cursor-pointer ${
                 isCamOn
-                  ? "bg-gray-800 text-white hover:bg-gray-700"
-                  : "bg-red-600 text-white hover:bg-red-500"
+                  ? "bg-[#3D2E2A] text-[#F8DDC9] hover:bg-[#4E3B36]"
+                  : "bg-[#9E2A2B] text-white hover:bg-[#B33132]"
               }`}
               data-testid="room-toggle-cam"
             >
@@ -207,7 +213,7 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
             <button
               onClick={onLeaveRoom}
               aria-label="Leave call"
-              className="flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-bold text-white shadow hover:bg-red-700 active:scale-95 transition"
+              className="flex items-center gap-2 rounded-full bg-[#9B3B25] px-5 py-2.5 text-sm font-medium text-white shadow-md hover:bg-[#83321F] active:scale-95 transition cursor-pointer"
               data-testid="room-leave-btn"
             >
               <PhoneOff className="h-4 w-4" />
@@ -219,17 +225,17 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
         {/* Right Column: Interviewer Workspace (60%) or Candidate Scratchpad */}
         {isInterviewer ? (
           <section
-            className="flex flex-1 flex-col bg-[#091424] overflow-hidden"
+            className="flex flex-1 flex-col bg-[#FFFDFB] overflow-hidden"
             data-testid="interviewer-workspace"
           >
             {/* Tab Navigation */}
-            <div className="flex border-b border-gray-800 bg-[#0d1b2e] px-4">
+            <div className="flex border-b border-[#EADBCE] bg-[#FFF8F0]/70 px-6 gap-2">
               <button
                 onClick={() => setActiveTab("rubric")}
-                className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold uppercase tracking-wider border-b-2 transition ${
+                className={`flex items-center gap-2 px-4 py-3.5 text-xs font-semibold uppercase tracking-wider border-b-2 transition cursor-pointer ${
                   activeTab === "rubric"
-                    ? "border-purple-500 text-purple-400"
-                    : "border-transparent text-gray-400 hover:text-white"
+                    ? "border-[#9B3B25] text-[#9B3B25]"
+                    : "border-transparent text-[#6E5652] hover:text-[#342523]"
                 }`}
                 data-testid="tab-interviewer-rubric"
               >
@@ -239,23 +245,23 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
 
               <button
                 onClick={() => setActiveTab("notes")}
-                className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold uppercase tracking-wider border-b-2 transition ${
+                className={`flex items-center gap-2 px-4 py-3.5 text-xs font-semibold uppercase tracking-wider border-b-2 transition cursor-pointer ${
                   activeTab === "notes"
-                    ? "border-purple-500 text-purple-400"
-                    : "border-transparent text-gray-400 hover:text-white"
+                    ? "border-[#9B3B25] text-[#9B3B25]"
+                    : "border-transparent text-[#6E5652] hover:text-[#342523]"
                 }`}
                 data-testid="tab-interviewer-notes"
               >
-                <Lock className="h-4 w-4 text-amber-400" />
+                <Lock className="h-4 w-4 text-[#A65E00]" />
                 Private Notes
               </button>
 
               <button
                 onClick={() => setActiveTab("scratchpad")}
-                className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold uppercase tracking-wider border-b-2 transition ${
+                className={`flex items-center gap-2 px-4 py-3.5 text-xs font-semibold uppercase tracking-wider border-b-2 transition cursor-pointer ${
                   activeTab === "scratchpad"
-                    ? "border-purple-500 text-purple-400"
-                    : "border-transparent text-gray-400 hover:text-white"
+                    ? "border-[#9B3B25] text-[#9B3B25]"
+                    : "border-transparent text-[#6E5652] hover:text-[#342523]"
                 }`}
                 data-testid="tab-interviewer-scratchpad"
               >
@@ -265,15 +271,21 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
             </div>
 
             {/* Tab Content */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto p-6 sm:p-8">
               {activeTab === "rubric" && (
                 <div className="space-y-6" data-testid="rubric-panel">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-base text-gray-100">Standardized Evaluation Rubric</h3>
-                    <span className="text-xs text-gray-400">Score 1 (Poor) to 5 (Exceptional)</span>
+                  <div className="flex items-center justify-between pb-2 border-b border-[#EADBCE]">
+                    <div>
+                      <h3 className="font-serif text-lg font-normal text-[#342523]">
+                        Standardized Evaluation Rubric
+                      </h3>
+                      <p className="text-xs text-[#6E5652]">
+                        Score 1 (Poor) to 5 (Exceptional)
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="space-y-3.5">
                     {[
                       { id: "problem_solving", label: "Problem Solving & Analytical Thinking" },
                       { id: "system_architecture", label: "System Design & Architecture" },
@@ -282,9 +294,9 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
                     ].map((criteria) => (
                       <div
                         key={criteria.id}
-                        className="rounded-xl border border-gray-800 bg-[#0d1b2e] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                        className="rounded-[20px] border border-[#EADBCE] bg-[#FFF8F0]/40 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs"
                       >
-                        <span className="text-sm font-medium text-gray-200">{criteria.label}</span>
+                        <span className="text-sm font-medium text-[#342523]">{criteria.label}</span>
                         <div className="flex items-center gap-1.5">
                           {[1, 2, 3, 4, 5].map((star) => (
                             <button
@@ -292,10 +304,10 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
                               type="button"
                               onClick={() => handleScoreChange(criteria.id, star)}
                               aria-label={`Score ${star} for ${criteria.label}`}
-                              className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold transition ${
+                              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition cursor-pointer ${
                                 (rubricScores[criteria.id] || 0) >= star
-                                  ? "bg-purple-600 text-white shadow"
-                                  : "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white"
+                                  ? "bg-[#9B3B25] text-white shadow-xs"
+                                  : "bg-[#FBF2ED] text-[#6E5652] hover:bg-[#F8DDC9] hover:text-[#9B3B25]"
                               }`}
                             >
                               {star}
@@ -307,7 +319,7 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold uppercase text-gray-400 mb-2">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#6E5652] mb-2">
                       Structured Feedback & Recommendations
                     </label>
                     <textarea
@@ -315,7 +327,7 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
                       value={rubricFeedback}
                       onChange={(e) => setRubricFeedback(e.target.value)}
                       placeholder="Enter detailed feedback on candidate strengths, areas of improvement, and concrete next steps..."
-                      className="w-full rounded-xl border border-gray-800 bg-[#0d1b2e] p-4 text-sm text-gray-200 placeholder-gray-600 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                      className="w-full rounded-2xl border border-[#EADBCE] bg-[#FFF8F0] p-4 text-sm text-[#342523] placeholder-[#96817D] focus:border-[#9B3B25] focus:outline-none focus:ring-1 focus:ring-[#9B3B25] transition"
                     />
                   </div>
                 </div>
@@ -323,9 +335,9 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
 
               {activeTab === "notes" && (
                 <div className="space-y-4" data-testid="private-notes-panel">
-                  <div className="flex items-center gap-2 text-amber-300 text-xs bg-amber-500/10 border border-amber-500/20 p-3 rounded-xl">
-                    <Lock className="h-4 w-4 shrink-0" />
-                    <span>
+                  <div className="flex items-center gap-2.5 text-[#A65E00] text-xs bg-[#FEF3E2] border border-[#ECC2A4] p-3.5 rounded-2xl">
+                    <Lock className="h-4 w-4 shrink-0 text-[#9B3B25]" />
+                    <span className="font-medium">
                       Private Notes are confidential to you and are never visible to the candidate.
                     </span>
                   </div>
@@ -335,17 +347,17 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
                     value={interviewerNotes}
                     onChange={(e) => setInterviewerNotes(e.target.value)}
                     placeholder="Type private observations, time milestones, solution efficiency hints..."
-                    className="w-full rounded-xl border border-gray-800 bg-[#0d1b2e] p-4 font-mono text-sm text-gray-200 placeholder-gray-600 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                    className="w-full rounded-2xl border border-[#EADBCE] bg-[#FFF8F0] p-4 font-mono text-sm text-[#342523] placeholder-[#96817D] focus:border-[#9B3B25] focus:outline-none focus:ring-1 focus:ring-[#9B3B25] transition"
                     data-testid="private-notes-textarea"
                   />
                 </div>
               )}
 
               {activeTab === "scratchpad" && (
-                <div className="h-full flex flex-col space-y-2" data-testid="shared-scratchpad-panel">
-                  <div className="flex items-center justify-between text-xs text-gray-400">
-                    <span>Collaborative Problem & Code Scratchpad</span>
-                    <span className="text-green-400 flex items-center gap-1">
+                <div className="h-full flex flex-col space-y-3" data-testid="shared-scratchpad-panel">
+                  <div className="flex items-center justify-between text-xs text-[#6E5652]">
+                    <span className="font-medium">Collaborative Problem & Code Scratchpad</span>
+                    <span className="flex items-center gap-1 rounded-full bg-[#E8F4EC] border border-[#C2E0CC] px-2.5 py-0.5 text-xs text-[#2C6E49] font-medium">
                       <CheckCircle2 className="h-3 w-3" /> Sync Active
                     </span>
                   </div>
@@ -353,7 +365,7 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
                     rows={18}
                     value={scratchpadContent}
                     onChange={(e) => setScratchpadContent(e.target.value)}
-                    className="w-full flex-1 rounded-xl border border-gray-800 bg-[#08111f] p-4 font-mono text-sm text-green-400 placeholder-gray-600 focus:border-purple-500 focus:outline-none"
+                    className="w-full flex-1 rounded-2xl border border-[#3A2D2A] bg-[#1E1715] p-4 font-mono text-sm text-[#F8DDC9] placeholder-[#96817D] focus:border-[#9B3B25] focus:outline-none transition"
                     data-testid="scratchpad-textarea"
                   />
                 </div>
@@ -363,22 +375,24 @@ export function LiveRoom({ session, initialSettings, onLeaveRoom }: LiveRoomProp
         ) : (
           /* Candidate Right Side: Shared Scratchpad Only (No Rubric or Private Notes!) */
           <section
-            className="hidden lg:flex flex-1 flex-col bg-[#091424] border-l border-gray-800/80 p-6 overflow-hidden"
+            className="hidden lg:flex flex-1 flex-col bg-[#FFFDFB] border-l border-[#EADBCE] p-6 sm:p-8 overflow-hidden"
             data-testid="candidate-scratchpad-panel"
           >
-            <div className="flex items-center justify-between pb-3 border-b border-gray-800 mb-4">
+            <div className="flex items-center justify-between pb-3.5 border-b border-[#EADBCE] mb-4">
               <div className="flex items-center gap-2">
-                <Code2 className="h-5 w-5 text-blue-400" />
-                <h3 className="font-bold text-sm text-gray-200">Shared Coding Scratchpad</h3>
+                <Code2 className="h-5 w-5 text-[#9B3B25]" />
+                <h3 className="font-serif text-lg font-normal text-[#342523]">Shared Coding Scratchpad</h3>
               </div>
-              <span className="text-xs text-gray-500 font-mono">Live Sync</span>
+              <span className="text-xs text-[#6E5652] font-medium rounded-full bg-[#FBF2ED] border border-[#EADBCE] px-2.5 py-0.5">
+                Live Sync
+              </span>
             </div>
 
             <textarea
               rows={22}
               value={scratchpadContent}
               onChange={(e) => setScratchpadContent(e.target.value)}
-              className="w-full flex-1 rounded-xl border border-gray-800 bg-[#08111f] p-4 font-mono text-sm text-blue-300 placeholder-gray-600 focus:border-blue-500 focus:outline-none"
+              className="w-full flex-1 rounded-2xl border border-[#3A2D2A] bg-[#1E1715] p-4 font-mono text-sm text-[#F8DDC9] placeholder-[#96817D] focus:border-[#9B3B25] focus:outline-none transition"
               data-testid="candidate-scratchpad-textarea"
             />
           </section>

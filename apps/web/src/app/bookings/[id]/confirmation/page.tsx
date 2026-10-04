@@ -10,14 +10,16 @@ export default function BookingConfirmationPage() {
   const bookingId = params?.id as string;
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
-      {bookingId ? (
-        <PaymentStatusPoller bookingId={bookingId} />
-      ) : (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center text-sm text-red-700">
-          Invalid or missing booking ID.
-        </div>
-      )}
+    <div className="min-h-[calc(100vh-4rem)] bg-[#FFF8F0] py-16 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-2xl">
+        {bookingId ? (
+          <PaymentStatusPoller bookingId={bookingId} />
+        ) : (
+          <div className="rounded-[24px] border border-red-200 bg-[#FCEBEB] p-6 text-center text-sm text-[#9E2A2B]">
+            Invalid or missing booking ID.
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -14,19 +14,19 @@ export function ErrorDisplay({ code, message, onRetry, onReset }: ErrorDisplayPr
 
   return (
     <div
-      className="flex min-h-screen items-center justify-center p-6 bg-[#08111f] text-white"
+      className="flex min-h-screen items-center justify-center p-6 bg-[#FFF8F0] text-[#342523]"
       data-testid="desktop-error-display"
     >
-      <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-[#0d1b2e] p-8 shadow-2xl text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-500/10 text-red-400 mb-4">
+      <div className="w-full max-w-md rounded-[28px] border border-[#EADBCE] bg-[#FFFDFB] p-8 sm:p-10 shadow-xl text-center">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#FCEBEB] text-[#9E2A2B] mb-5 shadow-xs">
           {isSecurityOrTicket ? <ShieldAlert className="h-8 w-8" /> : <AlertCircle className="h-8 w-8" />}
         </div>
 
-        <h2 className="text-xl font-bold text-white mb-2">
+        <h2 className="font-serif text-2xl font-normal text-[#342523] mb-3">
           {isSecurityOrTicket ? "Ticket Expired or Invalid" : "Connection Issue"}
         </h2>
 
-        <p className="text-sm text-gray-300 mb-6 leading-relaxed">
+        <p className="text-sm text-[#6E5652] mb-8 leading-relaxed">
           {message}
         </p>
 
@@ -34,7 +34,7 @@ export function ErrorDisplay({ code, message, onRetry, onReset }: ErrorDisplayPr
           {onRetry && (
             <button
               onClick={onRetry}
-              className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-blue-500 transition"
+              className="flex items-center justify-center gap-2 rounded-full bg-[#9B3B25] px-6 py-3 text-sm font-medium text-white shadow-md hover:bg-[#83321F] active:scale-98 transition cursor-pointer"
               data-testid="error-retry-btn"
             >
               <RefreshCw className="h-4 w-4" />
@@ -45,7 +45,7 @@ export function ErrorDisplay({ code, message, onRetry, onReset }: ErrorDisplayPr
           {onReset && (
             <button
               onClick={onReset}
-              className="flex items-center justify-center gap-2 rounded-xl border border-gray-700 bg-gray-800/60 px-5 py-2.5 text-sm font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition"
+              className="flex items-center justify-center gap-2 rounded-full border border-[#EADBCE] bg-[#FFF8F0] px-6 py-3 text-sm font-medium text-[#6E5652] hover:text-[#342523] hover:bg-[#F8DDC9]/50 transition cursor-pointer"
               data-testid="error-reset-btn"
             >
               <ArrowLeft className="h-4 w-4" />

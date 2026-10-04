@@ -42,19 +42,19 @@ export function ReservationTimer({ expiresAt, onExpire, className = "" }: Reserv
 
   return (
     <div
-      className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium ${
+      className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold tabular-nums transition-colors ${
         isExpired
-          ? "bg-red-100 text-red-700 border border-red-200"
+          ? "bg-[#FCEBEB] text-[#9E2A2B] border border-[#F5C2C2]"
           : isUrgent
-            ? "bg-amber-100 text-amber-800 border border-amber-200 animate-pulse"
-            : "bg-blue-50 text-blue-700 border border-blue-100"
+            ? "bg-[#FEF3E2] text-[#A65E00] border border-[#FAD7A0] animate-pulse"
+            : "bg-[#FDF5EE] text-[#9B3B25] border border-[#ECC2A4]"
       } ${className}`}
       data-testid="reservation-timer"
     >
       {isExpired || isUrgent ? (
         <AlertTriangle className="h-4 w-4 shrink-0" />
       ) : (
-        <Clock className="h-4 w-4 shrink-0" />
+        <Clock className="h-4 w-4 shrink-0 text-[#9B3B25]" />
       )}
       <span>
         {isExpired ? "Reservation Expired" : `Reserved for ${formattedTime}`}

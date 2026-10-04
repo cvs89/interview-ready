@@ -67,42 +67,44 @@ export function PaymentStatusPoller({ bookingId }: PaymentStatusPollerProps) {
 
   if (status === "confirmed") {
     return (
-      <div className="rounded-2xl border border-green-200 bg-green-50 p-8 text-center shadow-sm">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-600 mb-4">
-          <CheckCircle2 className="h-10 w-10" />
+      <div className="card-confidence p-8 sm:p-10 text-center">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#E8F4EC] text-[#2C6E49] border border-[#B4DEC4] mb-4">
+          <CheckCircle2 className="h-9 w-9" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Booking Confirmed!</h2>
-        <p className="text-sm text-gray-600 max-w-md mx-auto mb-6">
+        <h2 className="font-editorial text-2xl sm:text-3xl font-bold text-[#342523] mb-2">
+          Booking Confirmed!
+        </h2>
+        <p className="text-sm text-[#6E5652] max-w-md mx-auto mb-6 leading-relaxed">
           Payment webhook confirmation received. Your mock interview slot is booked and secured.
         </p>
 
         {booking && (
-          <div className="bg-white rounded-xl border border-green-100 p-4 max-w-sm mx-auto text-left text-sm space-y-2 mb-6 shadow-sm">
-            <div className="flex justify-between text-gray-600">
+          <div className="bg-[#FFFDFB] rounded-2xl border border-[#EADBCE] p-5 max-w-sm mx-auto text-left text-sm space-y-2.5 mb-7">
+            <div className="flex justify-between text-[#6E5652]">
               <span>Amount Paid:</span>
-              <span className="font-semibold text-gray-900">
+              <span className="font-editorial font-bold text-[#9B3B25] text-base">
                 {formatCurrency(booking.price_minor, booking.currency)}
               </span>
             </div>
-            <div className="flex justify-between text-gray-600">
+            <div className="flex justify-between items-center text-[#6E5652]">
               <span>Status:</span>
-              <span className="font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded text-xs">
+              <span className="badge-confidence-confirmed text-xs">
                 CONFIRMED
               </span>
             </div>
           </div>
         )}
 
-        <div className="flex justify-center gap-3">
+        <div className="flex flex-col sm:flex-row justify-center gap-3">
           <Link
             href="/dashboard"
-            className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-blue-700 transition"
+            className="btn-pill-primary px-6 py-2.5 text-sm"
           >
             Go to My Bookings
           </Link>
           <Link
             href="/marketplace"
-            className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+            className="btn-pill-secondary px-6 py-2.5 text-sm"
           >
             Browse More Interviewers
           </Link>
@@ -113,17 +115,19 @@ export function PaymentStatusPoller({ bookingId }: PaymentStatusPollerProps) {
 
   if (status === "failed") {
     return (
-      <div className="rounded-2xl border border-red-200 bg-red-50 p-8 text-center shadow-sm">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-600 mb-4">
+      <div className="card-confidence p-8 sm:p-10 text-center">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#FCEBEB] text-[#9E2A2B] border border-[#F5C2C2] mb-4">
           <AlertCircle className="h-8 w-8" />
         </div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2">Payment Not Completed</h2>
-        <p className="text-sm text-gray-600 max-w-md mx-auto mb-6">
+        <h2 className="font-editorial text-2xl font-bold text-[#342523] mb-2">
+          Payment Not Completed
+        </h2>
+        <p className="text-sm text-[#6E5652] max-w-md mx-auto mb-6">
           {errorMsg || "The booking reservation could not be confirmed."}
         </p>
         <Link
           href="/marketplace"
-          className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 transition"
+          className="btn-pill-primary px-6 py-2.5 text-sm inline-flex"
         >
           Return to Marketplace
         </Link>
@@ -133,17 +137,19 @@ export function PaymentStatusPoller({ bookingId }: PaymentStatusPollerProps) {
 
   if (status === "pending_timeout") {
     return (
-      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-8 text-center shadow-sm">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-100 text-amber-700 mb-4">
+      <div className="card-confidence p-8 sm:p-10 text-center">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#FEF3E2] text-[#A65E00] border border-[#FAD7A0] mb-4">
           <Clock className="h-8 w-8" />
         </div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2">Payment Processing</h2>
-        <p className="text-sm text-gray-600 max-w-md mx-auto mb-6">
-          We are waiting for the payment provider webhook to deliver confirmation. Your slot status will automatically update in your dashboard once processed.
+        <h2 className="font-editorial text-2xl font-bold text-[#342523] mb-2">
+          Payment Processing
+        </h2>
+        <p className="text-sm text-[#6E5652] max-w-md mx-auto mb-6 leading-relaxed">
+          We are waiting for the payment gateway webhook to deliver final confirmation. Your slot status will automatically update in your dashboard once processed.
         </p>
         <Link
           href="/dashboard"
-          className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 transition"
+          className="btn-pill-primary px-6 py-2.5 text-sm inline-flex"
         >
           View Dashboard
         </Link>
@@ -153,11 +159,13 @@ export function PaymentStatusPoller({ bookingId }: PaymentStatusPollerProps) {
 
   // Polling in progress
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-10 text-center shadow-sm" data-testid="payment-polling">
-      <Loader2 className="mx-auto h-10 w-10 animate-spin text-blue-600 mb-4" />
-      <h3 className="font-bold text-lg text-gray-900 mb-2">Verifying Payment Confirmation</h3>
-      <p className="text-sm text-gray-500 max-w-sm mx-auto">
-        Waiting for verified payment webhook from provider...
+    <div className="card-confidence p-10 sm:p-12 text-center" data-testid="payment-polling">
+      <Loader2 className="mx-auto h-10 w-10 animate-spin text-[#9B3B25] mb-4" />
+      <h3 className="font-editorial text-xl font-bold text-[#342523] mb-2">
+        Verifying Payment Confirmation
+      </h3>
+      <p className="text-sm text-[#6E5652] max-w-sm mx-auto">
+        Waiting for verified webhook from payment gateway...
       </p>
     </div>
   );

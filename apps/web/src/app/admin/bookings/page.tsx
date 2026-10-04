@@ -51,31 +51,31 @@ export default function AdminBookingsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "CONFIRMED":
-        return "bg-emerald-50 text-emerald-700 ring-emerald-600/20";
+        return "bg-[#E8F4EC] text-[#2C6E49] border border-[#C5E1D0]";
       case "PENDING_PAYMENT":
-        return "bg-amber-50 text-amber-700 ring-amber-600/20";
+        return "bg-[#FEF3E2] text-[#A65E00] border border-[#FADBB0]";
       case "COMPLETED":
-        return "bg-blue-50 text-blue-700 ring-blue-600/20";
+        return "bg-[#FDF5EE] text-[#9B3B25] border border-[#ECC2A4]";
       case "CANCELLED":
-        return "bg-rose-50 text-rose-700 ring-rose-600/20";
+        return "bg-[#FCEBEB] text-[#9E2A2B] border border-[#F5C2B8]";
       case "EXPIRED":
-        return "bg-gray-50 text-gray-700 ring-gray-600/20";
+        return "bg-[#FDF5EE] text-[#6E5652] border border-[#EADBCE]";
       default:
-        return "bg-gray-50 text-gray-700 ring-gray-600/20";
+        return "bg-[#FDF5EE] text-[#6E5652] border border-[#EADBCE]";
     }
   };
 
   const getPaymentBadge = (status: string | null | undefined) => {
-    if (!status) return "bg-gray-50 text-gray-500 ring-gray-400/20";
+    if (!status) return "bg-[#FDF5EE] text-[#6E5652] border border-[#EADBCE]";
     switch (status) {
       case "PAID":
-        return "bg-emerald-50 text-emerald-700 ring-emerald-600/20";
+        return "bg-[#E8F4EC] text-[#2C6E49] border border-[#C5E1D0]";
       case "PENDING":
-        return "bg-amber-50 text-amber-700 ring-amber-600/20";
+        return "bg-[#FEF3E2] text-[#A65E00] border border-[#FADBB0]";
       case "REFUNDED":
-        return "bg-purple-50 text-purple-700 ring-purple-600/20";
+        return "bg-[#F8DDC9] text-[#9B3B25] border border-[#ECC2A4]";
       default:
-        return "bg-gray-50 text-gray-700 ring-gray-600/20";
+        return "bg-[#FDF5EE] text-[#6E5652] border border-[#EADBCE]";
     }
   };
 
@@ -83,32 +83,32 @@ export default function AdminBookingsPage() {
     <div className="space-y-6">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h2 className="text-xl font-bold text-gray-900">Bookings Inspection</h2>
-          <p className="text-sm text-gray-500">
+          <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#342523]">Bookings Inspection</h2>
+          <p className="text-sm text-[#6E5652] mt-1">
             Audit interview sessions, participant pairing, schedule timing, and payment states.
           </p>
         </div>
         <button
           onClick={() => fetchBookings()}
           disabled={loading}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 shadow-sm"
+          className="inline-flex items-center gap-1.5 rounded-full border border-[#EADBCE] bg-white px-4 py-2 text-xs font-medium text-[#342523] hover:bg-[#FDF5EE] shadow-sm transition"
         >
-          <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+          <RefreshCw className={`h-3.5 w-3.5 text-[#6E5652] ${loading ? "animate-spin" : ""}`} />
           Refresh
         </button>
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 p-4 border border-red-200 text-sm text-red-700 flex items-center gap-2">
+        <div className="rounded-2xl bg-[#FCEBEB] p-4 border border-red-200 text-sm text-[#9E2A2B] flex items-center gap-2">
           <AlertCircle className="h-4 w-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Filter Bar */}
-      <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm flex items-center gap-4">
-        <Filter className="h-4 w-4 text-gray-400" />
-        <span className="text-xs font-medium text-gray-600">Booking Status:</span>
+      <div className="rounded-[24px] border border-[#EADBCE] bg-white p-4 shadow-sm flex items-center gap-4">
+        <Filter className="h-4 w-4 text-[#96817D]" />
+        <span className="text-xs font-semibold uppercase tracking-wider text-[#6E5652]">Booking Status:</span>
         <div className="flex flex-wrap gap-2">
           {["ALL", "CONFIRMED", "PENDING_PAYMENT", "COMPLETED", "CANCELLED", "EXPIRED"].map((st) => (
             <button
@@ -117,10 +117,10 @@ export default function AdminBookingsPage() {
                 setStatusFilter(st);
                 setOffset(0);
               }}
-              className={`rounded-lg px-3 py-1 text-xs font-medium transition ${
+              className={`rounded-full px-3.5 py-1 text-xs font-medium transition ${
                 statusFilter === st
-                  ? "bg-purple-600 text-white shadow-sm"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-[#9B3B25] text-white shadow-sm"
+                  : "bg-[#FDF5EE] text-[#6E5652] hover:bg-[#F8DDC9]"
               }`}
             >
               {st.replace("_", " ")}
@@ -130,32 +130,32 @@ export default function AdminBookingsPage() {
       </div>
 
       {/* Bookings Table */}
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-[24px] border border-[#EADBCE] bg-white shadow-sm">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
-            <thead className="bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          <table className="min-w-full divide-y divide-[#EADBCE] text-left text-sm">
+            <thead className="bg-[#FFFDFB] text-xs font-semibold text-[#6E5652] uppercase tracking-wider">
               <tr>
-                <th className="px-6 py-3">Booking ID</th>
-                <th className="px-6 py-3">Candidate</th>
-                <th className="px-6 py-3">Interviewer</th>
-                <th className="px-6 py-3">Scheduled Time</th>
-                <th className="px-6 py-3">Amount</th>
-                <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3">Payment</th>
-                <th className="px-6 py-3 text-right">Inspect</th>
+                <th className="px-6 py-3.5">Booking ID</th>
+                <th className="px-6 py-3.5">Candidate</th>
+                <th className="px-6 py-3.5">Interviewer</th>
+                <th className="px-6 py-3.5">Scheduled Time</th>
+                <th className="px-6 py-3.5">Amount</th>
+                <th className="px-6 py-3.5">Status</th>
+                <th className="px-6 py-3.5">Payment</th>
+                <th className="px-6 py-3.5 text-right">Inspect</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 bg-white">
+            <tbody className="divide-y divide-[#EADBCE] bg-white">
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="py-12 text-center text-gray-400">
-                    <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-purple-600 border-t-transparent" />
+                  <td colSpan={8} className="py-12 text-center text-[#6E5652]">
+                    <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-[#9B3B25] border-t-transparent" />
                     <p className="mt-2 text-xs">Loading bookings...</p>
                   </td>
                 </tr>
               ) : bookings.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-12 text-center text-gray-500">
+                  <td colSpan={8} className="py-12 text-center text-[#6E5652]">
                     No bookings found for this filter.
                   </td>
                 </tr>
@@ -163,32 +163,32 @@ export default function AdminBookingsPage() {
                 bookings.map((b) => {
                   const { dateStr, timeStr } = formatUtcToLocal(b.slot_start_time);
                   return (
-                    <tr key={b.id} className="hover:bg-gray-50/50 transition">
-                      <td className="px-6 py-4 whitespace-nowrap text-xs font-mono text-gray-500">
+                    <tr key={b.id} className="hover:bg-[#FFF8F0]/60 transition">
+                      <td className="px-6 py-4 whitespace-nowrap text-xs font-mono text-[#6E5652]">
                         {b.id.substring(0, 8)}...
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="font-medium text-gray-900">{b.candidate_name}</div>
-                          <div className="text-xs text-gray-500">{b.candidate_email}</div>
+                          <div className="font-medium text-[#342523]">{b.candidate_name}</div>
+                          <div className="text-xs text-[#6E5652]">{b.candidate_email}</div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="font-medium text-gray-900">{b.interviewer_name}</div>
-                          <div className="text-xs text-gray-500">{b.interviewer_email}</div>
+                          <div className="font-medium text-[#342523]">{b.interviewer_name}</div>
+                          <div className="text-xs text-[#6E5652]">{b.interviewer_email}</div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-700">
+                      <td className="px-6 py-4 whitespace-nowrap text-xs text-[#342523]">
                         <div>{dateStr}</div>
-                        <div className="text-gray-400">{timeStr}</div>
+                        <div className="text-[#96817D]">{timeStr}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-[#342523]">
                         {formatCurrency(b.price_minor, b.currency)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${getStatusBadge(
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${getStatusBadge(
                             b.status
                           )}`}
                         >
@@ -197,7 +197,7 @@ export default function AdminBookingsPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${getPaymentBadge(
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${getPaymentBadge(
                             b.payment_status
                           )}`}
                         >
@@ -207,7 +207,7 @@ export default function AdminBookingsPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-right text-xs">
                         <button
                           onClick={() => setSelectedBooking(b)}
-                          className="rounded border border-gray-300 bg-white p-1.5 text-gray-700 hover:bg-gray-50 shadow-sm"
+                          className="rounded-full border border-[#EADBCE] bg-white p-1.5 text-[#6E5652] hover:bg-[#FDF5EE] hover:text-[#9B3B25] shadow-sm transition"
                           title="View booking details"
                         >
                           <Eye className="h-4 w-4" />
@@ -222,24 +222,24 @@ export default function AdminBookingsPage() {
         </div>
 
         {/* Pagination Bar */}
-        <div className="flex items-center justify-between border-t border-gray-200 px-6 py-3">
-          <span className="text-xs text-gray-500">
-            Showing <span className="font-semibold">{bookings.length > 0 ? offset + 1 : 0}</span> to{" "}
-            <span className="font-semibold">{Math.min(offset + limit, total)}</span> of{" "}
-            <span className="font-semibold">{total}</span> bookings
+        <div className="flex items-center justify-between border-t border-[#EADBCE] px-6 py-3.5 bg-[#FFFDFB]">
+          <span className="text-xs text-[#6E5652]">
+            Showing <span className="font-semibold text-[#342523]">{bookings.length > 0 ? offset + 1 : 0}</span> to{" "}
+            <span className="font-semibold text-[#342523]">{Math.min(offset + limit, total)}</span> of{" "}
+            <span className="font-semibold text-[#342523]">{total}</span> bookings
           </span>
           <div className="flex gap-2">
             <button
               onClick={() => setOffset(Math.max(0, offset - limit))}
               disabled={offset === 0 || loading}
-              className="rounded-md border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="rounded-full border border-[#EADBCE] bg-white px-3.5 py-1 text-xs font-medium text-[#342523] hover:bg-[#FDF5EE] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition"
             >
               Previous
             </button>
             <button
               onClick={() => setOffset(offset + limit)}
               disabled={offset + limit >= total || loading}
-              className="rounded-md border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="rounded-full border border-[#EADBCE] bg-white px-3.5 py-1 text-xs font-medium text-[#342523] hover:bg-[#FDF5EE] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition"
             >
               Next
             </button>
@@ -249,63 +249,65 @@ export default function AdminBookingsPage() {
 
       {/* Booking Inspection Detail Modal */}
       {selectedBooking && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <div className="flex items-center gap-2">
-                <Video className="h-5 w-5 text-purple-600" />
-                <h3 className="text-base font-semibold text-gray-900">Booking Inspection</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
+          <div className="w-full max-w-lg rounded-[24px] bg-white p-6 sm:p-8 shadow-xl border border-[#EADBCE]">
+            <div className="flex items-center justify-between border-b border-[#EADBCE] pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F8DDC9] text-[#9B3B25]">
+                  <Video className="h-5 w-5" />
+                </div>
+                <h3 className="font-serif text-lg font-normal text-[#342523]">Booking Inspection</h3>
               </div>
-              <span className="font-mono text-xs text-gray-400">{selectedBooking.id}</span>
+              <span className="font-mono text-xs text-[#6E5652]">{selectedBooking.id}</span>
             </div>
 
             <div className="mt-4 space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-4 rounded-lg bg-gray-50 p-3 border border-gray-100">
+              <div className="grid grid-cols-2 gap-4 rounded-2xl bg-[#FFFDFB] p-4 border border-[#EADBCE]">
                 <div>
-                  <span className="text-gray-500">Booking Status:</span>
-                  <div className="mt-1 font-semibold text-gray-900">{selectedBooking.status}</div>
+                  <span className="text-[#6E5652]">Booking Status:</span>
+                  <div className="mt-1 font-semibold text-[#342523]">{selectedBooking.status}</div>
                 </div>
                 <div>
-                  <span className="text-gray-500">Payment Status:</span>
-                  <div className="mt-1 font-semibold text-gray-900">{selectedBooking.payment_status || "UNPAID"}</div>
+                  <span className="text-[#6E5652]">Payment Status:</span>
+                  <div className="mt-1 font-semibold text-[#342523]">{selectedBooking.payment_status || "UNPAID"}</div>
                 </div>
                 <div>
-                  <span className="text-gray-500">Amount:</span>
-                  <div className="mt-1 font-semibold text-gray-900">
+                  <span className="text-[#6E5652]">Amount:</span>
+                  <div className="mt-1 font-semibold text-[#342523]">
                     {formatCurrency(selectedBooking.price_minor, selectedBooking.currency)}
                   </div>
                 </div>
                 <div>
-                  <span className="text-gray-500">Slot ID:</span>
-                  <div className="mt-1 font-mono text-[10px] text-gray-700 truncate">{selectedBooking.slot_id}</div>
+                  <span className="text-[#6E5652]">Slot ID:</span>
+                  <div className="mt-1 font-mono text-[10px] text-[#6E5652] truncate">{selectedBooking.slot_id}</div>
                 </div>
               </div>
 
-              <div className="border-t border-gray-100 pt-3">
-                <h4 className="font-medium text-gray-700 mb-2 flex items-center gap-1.5">
-                  <UserCheck className="h-4 w-4 text-blue-600" /> Participants
+              <div className="border-t border-[#EADBCE] pt-3">
+                <h4 className="font-medium text-[#342523] mb-2 flex items-center gap-1.5">
+                  <UserCheck className="h-4 w-4 text-[#9B3B25]" /> Participants
                 </h4>
                 <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div className="rounded border border-gray-200 p-2.5">
-                    <span className="text-gray-400 uppercase text-[10px]">Candidate</span>
-                    <div className="font-semibold text-gray-900">{selectedBooking.candidate_name}</div>
-                    <div className="text-gray-500 text-[11px]">{selectedBooking.candidate_email}</div>
+                  <div className="rounded-xl border border-[#EADBCE] bg-[#FFFDFB] p-3">
+                    <span className="text-[#96817D] uppercase tracking-wider text-[10px]">Candidate</span>
+                    <div className="font-semibold text-[#342523] mt-0.5">{selectedBooking.candidate_name}</div>
+                    <div className="text-[#6E5652] text-[11px]">{selectedBooking.candidate_email}</div>
                   </div>
-                  <div className="rounded border border-gray-200 p-2.5">
-                    <span className="text-gray-400 uppercase text-[10px]">Interviewer</span>
-                    <div className="font-semibold text-gray-900">{selectedBooking.interviewer_name}</div>
-                    <div className="text-gray-500 text-[11px]">{selectedBooking.interviewer_email}</div>
+                  <div className="rounded-xl border border-[#EADBCE] bg-[#FFFDFB] p-3">
+                    <span className="text-[#96817D] uppercase tracking-wider text-[10px]">Interviewer</span>
+                    <div className="font-semibold text-[#342523] mt-0.5">{selectedBooking.interviewer_name}</div>
+                    <div className="text-[#6E5652] text-[11px]">{selectedBooking.interviewer_email}</div>
                   </div>
                 </div>
               </div>
 
-              <div className="border-t border-gray-100 pt-3">
-                <h4 className="font-medium text-gray-700 mb-1 flex items-center gap-1.5">
-                  <Calendar className="h-4 w-4 text-purple-600" /> Slot Timeline (UTC & Local)
+              <div className="border-t border-[#EADBCE] pt-3">
+                <h4 className="font-medium text-[#342523] mb-1 flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4 text-[#9B3B25]" /> Slot Timeline (UTC & Local)
                 </h4>
-                <div className="rounded bg-gray-50 p-2.5 space-y-1 text-gray-600 text-[11px]">
-                  <div><span className="font-medium">Start:</span> {selectedBooking.slot_start_time}</div>
-                  <div><span className="font-medium">End:</span> {selectedBooking.slot_end_time}</div>
+                <div className="rounded-xl bg-[#FFFDFB] border border-[#EADBCE] p-3 space-y-1 text-[#6E5652] text-[11px]">
+                  <div><span className="font-medium text-[#342523]">Start:</span> {selectedBooking.slot_start_time}</div>
+                  <div><span className="font-medium text-[#342523]">End:</span> {selectedBooking.slot_end_time}</div>
                 </div>
               </div>
             </div>
@@ -314,7 +316,7 @@ export default function AdminBookingsPage() {
               <button
                 type="button"
                 onClick={() => setSelectedBooking(null)}
-                className="rounded-lg bg-gray-900 px-4 py-2 text-xs font-medium text-white hover:bg-gray-800"
+                className="rounded-full bg-[#9B3B25] px-5 py-2 text-xs font-medium text-white shadow-sm hover:bg-[#83321F] transition"
               >
                 Close Inspection
               </button>

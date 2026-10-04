@@ -1,6 +1,64 @@
 # Interview Ready — Project Status and AI Handoff
 
-Last updated: 2026-10-02 (Asia/Kolkata)
+## Competitor research — 4 October 2026
+
+- Public-offering research: [Competitor report](docs/COMPETITOR_RESEARCH_2026-10-04.md).
+- Identified 13 relevant platforms: five direct human-mock competitors, four adjacent mentoring/booking platforms, and four AI/self-study alternatives. This is a shortlist, not an exhaustive market count; actual bookings were not tested.
+- Important corrections: Aced includes former Exponent/Pramp branding; Hello Interview ended live mocks and mentorship on 31 May 2026.
+- Pending research: like-for-like pricing/availability comparison, candidate/interviewer interviews, and a small paid pilot.
+- Documentation only; implementation and design-completion statuses are unchanged.
+
+## Design Implementation — The Confidence Club (Complete)
+
+- **Selected Direction**: **Direction 04 — The Confidence Club** (Approved by user).
+- **Status**: **Complete**.
+- **Palette**: Primary Terracotta `#9B3B25` (hover `#83321F`, active `#6D2919`, subtle `#FBF2ED`), Background Ivory `#FFF8F0` (warm `#FFFDFB`, card `#FFFFFF`), Accent Peach `#F8DDC9` (subtle `#FDF5EE`, border `#ECC2A4`), Ink `#342523` (muted `#6E5652`, subtle `#96817D`, border `#EADBCE`).
+- **Typography**: Lora (editorial serif headings) + DM Sans (interface and body sans-serif).
+- **Shape Language**: 24px rounded cards (`rounded-[24px]` / `rounded-[20px]`), pill-shaped action buttons (`rounded-full`), warm restrained elevation, rounded-xl inputs.
+- **Completed Components & Screens**:
+  1. **Design Tokens & Typography Foundation**:
+     - `apps/web/src/app/globals.css`: Tailwind v4 theme variables, `.card-confidence`, `.btn-pill-primary`, `.btn-pill-secondary`, `.badge-confidence-*`, Google Fonts `@import`.
+     - `apps/web/src/app/layout.tsx`: RootLayout configured with Ivory background `#FFF8F0`, Ink `#342523`, and DM Sans typography.
+     - `apps/desktop/src/styles.css`: CSS theme variables for Confidence Club palette, serif/sans utility classes.
+  2. **Navigation & Shared Components**:
+     - `apps/web/src/components/Navbar.tsx`: Warm ivory glassmorphism navbar, editorial logo `interview ready.`, pill actions, responsive mobile menu.
+     - `apps/web/src/components/marketplace/InterviewerCard.tsx`: 24px cards, initials avatar in peach circle, pill skill tags, terracotta CTA.
+     - `apps/web/src/components/marketplace/InterviewerFilter.tsx`: Warm card, terracotta focus rings, pill reset.
+     - `apps/web/src/components/marketplace/SlotSelector.tsx`: Reservation banner, selected slot highlights, pill action buttons.
+     - `apps/web/src/components/booking/ReservationTimer.tsx`: Pill countdown badge with tabular figures and urgent/expired states.
+     - `apps/web/src/components/booking/PaymentStatusPoller.tsx`: Poller, confirmed state with exact test string ("Payment webhook confirmation received. Your mock interview slot is booked and secured."), error states.
+     - `apps/web/src/components/dashboard/BookingList.tsx`: Tabbed filters, 24px session cards, warm badges.
+     - `apps/web/src/components/dashboard/JoinCallCard.tsx`: Warm card, status badges, countdown, join action.
+     - `apps/web/src/components/dashboard/DesktopFallbackModal.tsx`: 24px modal, OS download pills, retry action.
+  3. **Web Pages Redesigned**:
+     - Homepage (`apps/web/src/app/page.tsx`): Hero with warm typography, stats, 3-step path, verified pillars, interviewer CTA, FAQ accordion.
+     - Sign In (`apps/web/src/app/auth/sign-in/page.tsx`): 24px card, peach icon circle, Lora heading, warm inputs, pill submit and Google button.
+     - Sign Up (`apps/web/src/app/auth/sign-up/page.tsx`): 24px card, peach icon circle, Lora heading, warm inputs, pill submit and Google button.
+     - Interviewer Auth (`apps/web/src/app/auth/interviewer/page.tsx`): Editorial headline, value props with warm chips, 24px card, role switcher tabs, pill CTA.
+     - Marketplace & Discovery (`apps/web/src/app/marketplace/page.tsx`): Editorial header, sidebar filter, responsive grid of interviewer cards.
+     - Interviewer Profile & Booking (`apps/web/src/app/interviewers/[id]/page.tsx`): Profile header card, verified check, pill skill chips, rate card, Lora headings, slot container.
+     - Booking Confirmation (`apps/web/src/app/bookings/[id]/confirmation/page.tsx`): Warm container wrapping `PaymentStatusPoller`.
+     - Candidate Dashboard (`apps/web/src/app/dashboard/page.tsx`): Welcome banner, role chip, pill refresh, pill "Book New Slot", `BookingList`, `JoinCallCard`.
+     - Interviewer Workspace & Profile Manager (`apps/web/src/app/interviewer/page.tsx`): Verification status chips, AI auto-fill banner, 24px cards, tabs for Profile, Skills, Slots, Bookings.
+     - Admin Portal (`apps/web/src/app/admin/layout.tsx`, `page.tsx`, `users/page.tsx`, `verifications/page.tsx`, `bookings/page.tsx`, `audit-logs/page.tsx`): Shield badges, operations cards, 24px tables, modal dialogs with terracotta accents.
+  4. **Desktop App**:
+     - Device Preview (`apps/desktop/src/components/DevicePreview.tsx`): 28px card, Lora header, high-contrast video preview, pill join/cancel buttons.
+     - Deep Link Launch Prompt (`apps/desktop/src/components/DeepLinkPrompt.tsx`): 28px card, peach icon container, Lora heading, warm input, pill button.
+     - Error Display (`apps/desktop/src/components/ErrorDisplay.tsx`): 28px card, warm red alert container, pill retry/return buttons.
+     - Live Interview Room (`apps/desktop/src/components/LiveRoom.tsx`): Clean warm header with LiveKit room indicator, role pill badge, WebRTC status, dark focused video stage (`#1E1715` / `#140E0C`), floating rounded-full control bar with terracotta Leave pill, role-isolated 60% interviewer workspace (Evaluation Rubric 1-5 rating pills, private notes with confidential warning, shared scratchpad) and candidate scratchpad.
+- **Verification Checks & Results**:
+  - Web Unit & Component Tests: 40/40 passing (`npm run test:web`).
+  - Desktop Unit & Component Tests: 15/15 passing (`npm run test:desktop`).
+  - Web TypeScript Typecheck: Passed with 0 errors (`npm run typecheck:web`).
+  - Desktop TypeScript Typecheck: Passed with 0 errors (`npm run typecheck:desktop`).
+  - Next.js Production Build: 16/16 routes compiled successfully (`npm run build:web`).
+- **Files Changed**:
+  - `apps/web/src/app/globals.css`, `layout.tsx`, `page.tsx`, `marketplace/page.tsx`, `auth/sign-in/page.tsx`, `auth/sign-up/page.tsx`, `auth/interviewer/page.tsx`, `interviewers/[id]/page.tsx`, `bookings/[id]/confirmation/page.tsx`, `dashboard/page.tsx`, `interviewer/page.tsx`, `admin/layout.tsx`, `admin/page.tsx`, `admin/users/page.tsx`, `admin/verifications/page.tsx`, `admin/bookings/page.tsx`, `admin/audit-logs/page.tsx`.
+  - `apps/web/src/components/Navbar.tsx`, `marketplace/InterviewerCard.tsx`, `marketplace/InterviewerFilter.tsx`, `marketplace/SlotSelector.tsx`, `booking/ReservationTimer.tsx`, `booking/PaymentStatusPoller.tsx`, `dashboard/BookingList.tsx`, `dashboard/JoinCallCard.tsx`, `dashboard/DesktopFallbackModal.tsx`.
+  - `apps/desktop/src/styles.css`, `components/DevicePreview.tsx`, `components/DeepLinkPrompt.tsx`, `components/ErrorDisplay.tsx`, `components/LiveRoom.tsx`.
+- **Blockers**: None.
+
+Last updated: 2026-10-04 (Asia/Kolkata)
 
 This file is the durable implementation tracker for humans and AI tools. Update it at the end of every module. The numbered prompt files in `interview-ready-codex-prompts/` remain the source of truth for requirements.
 
@@ -396,4 +454,3 @@ Commands/checks passed: Ruff lint, Ruff format check (88 files), Strict mypy (67
 Known limitations: Rust/Cargo not running locally.
 Next module: Module 14 — Concurrency, Load, Integration, and End-to-End Validation
 ```
-

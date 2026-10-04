@@ -43,20 +43,20 @@ export function BookingList({ bookings, userRole }: BookingListProps) {
   return (
     <div className="space-y-6" data-testid="booking-list">
       {/* Tabs */}
-      <div className="flex border-b border-gray-200 gap-4 sm:gap-8">
+      <div className="flex border-b border-[#EADBCE] gap-3 sm:gap-6">
         <button
           onClick={() => setActiveTab("upcoming")}
-          className={`pb-3 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
+          className={`pb-3 text-sm font-semibold border-b-2 transition flex items-center gap-2 cursor-pointer ${
             activeTab === "upcoming"
-              ? "border-blue-600 text-blue-600"
-              : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              ? "border-[#9B3B25] text-[#9B3B25]"
+              : "border-transparent text-[#6E5652] hover:text-[#342523] hover:border-[#ECC2A4]"
           }`}
           data-testid="tab-upcoming"
         >
           <span>Upcoming</span>
           <span
-            className={`rounded-full px-2 py-0.5 text-xs ${
-              activeTab === "upcoming" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"
+            className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+              activeTab === "upcoming" ? "bg-[#F8DDC9] text-[#9B3B25]" : "bg-[#FDF5EE] text-[#6E5652]"
             }`}
           >
             {upcomingBookings.length}
@@ -65,17 +65,17 @@ export function BookingList({ bookings, userRole }: BookingListProps) {
 
         <button
           onClick={() => setActiveTab("completed")}
-          className={`pb-3 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
+          className={`pb-3 text-sm font-semibold border-b-2 transition flex items-center gap-2 cursor-pointer ${
             activeTab === "completed"
-              ? "border-blue-600 text-blue-600"
-              : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              ? "border-[#9B3B25] text-[#9B3B25]"
+              : "border-transparent text-[#6E5652] hover:text-[#342523] hover:border-[#ECC2A4]"
           }`}
           data-testid="tab-completed"
         >
           <span>Completed</span>
           <span
-            className={`rounded-full px-2 py-0.5 text-xs ${
-              activeTab === "completed" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"
+            className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+              activeTab === "completed" ? "bg-[#F8DDC9] text-[#9B3B25]" : "bg-[#FDF5EE] text-[#6E5652]"
             }`}
           >
             {completedBookings.length}
@@ -84,17 +84,17 @@ export function BookingList({ bookings, userRole }: BookingListProps) {
 
         <button
           onClick={() => setActiveTab("cancelled")}
-          className={`pb-3 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
+          className={`pb-3 text-sm font-semibold border-b-2 transition flex items-center gap-2 cursor-pointer ${
             activeTab === "cancelled"
-              ? "border-blue-600 text-blue-600"
-              : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              ? "border-[#9B3B25] text-[#9B3B25]"
+              : "border-transparent text-[#6E5652] hover:text-[#342523] hover:border-[#ECC2A4]"
           }`}
           data-testid="tab-cancelled"
         >
           <span>Cancelled / Expired</span>
           <span
-            className={`rounded-full px-2 py-0.5 text-xs ${
-              activeTab === "cancelled" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"
+            className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+              activeTab === "cancelled" ? "bg-[#F8DDC9] text-[#9B3B25]" : "bg-[#FDF5EE] text-[#6E5652]"
             }`}
           >
             {cancelledBookings.length}
@@ -104,26 +104,26 @@ export function BookingList({ bookings, userRole }: BookingListProps) {
 
       {/* Content */}
       {displayedBookings.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-12 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600 mb-3">
+        <div className="card-confidence p-10 sm:p-14 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#F8DDC9] text-[#9B3B25] border border-[#ECC2A4] mb-4">
             <Calendar className="h-6 w-6" />
           </div>
-          <h3 className="font-bold text-lg text-gray-900 mb-1">
+          <h3 className="font-editorial text-xl font-bold text-[#342523] mb-1.5">
             No {activeTab.replace("_", " ")} interviews
           </h3>
-          <p className="text-sm text-gray-500 max-w-sm mx-auto mb-6">
+          <p className="text-sm text-[#6E5652] max-w-sm mx-auto mb-6">
             {activeTab === "upcoming"
-              ? "You do not have any scheduled interviews right now. Find an interviewer and book a slot!"
+              ? "You do not have any scheduled practice sessions right now. Browse our approved interviewers and lock in a slot!"
               : activeTab === "completed"
-                ? "No completed interviews yet. Your past sessions and feedback will appear here."
+                ? "No completed interviews yet. Your past sessions and structured feedback will appear here."
                 : "No cancelled or expired interview records."}
           </p>
           {activeTab === "upcoming" && (
             <Link
               href="/marketplace"
-              className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-blue-700 transition"
+              className="btn-pill-primary px-6 py-2.5 text-sm inline-flex"
             >
-              Browse Interviewers
+              Browse Interviewers →
             </Link>
           )}
         </div>
@@ -142,39 +142,41 @@ export function BookingList({ bookings, userRole }: BookingListProps) {
             return (
               <div
                 key={booking.id}
-                className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6"
+                className="card-confidence p-6 sm:p-7 flex flex-col md:flex-row md:items-center justify-between gap-6"
                 data-testid={`booking-card-${booking.id}`}
               >
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider ${
-                        booking.status === "COMPLETED"
-                          ? "bg-blue-100 text-blue-800"
-                          : booking.status === "PENDING_PAYMENT"
-                            ? "bg-amber-100 text-amber-800"
-                            : "bg-gray-100 text-gray-700"
-                      }`}
-                    >
-                      {booking.status === "COMPLETED" && <CheckCircle2 className="h-3.5 w-3.5" />}
-                      {booking.status === "PENDING_PAYMENT" && <Clock className="h-3.5 w-3.5" />}
-                      {(booking.status === "CANCELLED" || booking.status === "EXPIRED") && (
-                        <XCircle className="h-3.5 w-3.5 text-red-500" />
-                      )}
-                      {booking.status.replace("_", " ")}
-                    </span>
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-2.5">
+                    {booking.status === "COMPLETED" && (
+                      <span className="badge-confidence-confirmed text-xs">
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        COMPLETED
+                      </span>
+                    )}
+                    {booking.status === "PENDING_PAYMENT" && (
+                      <span className="badge-confidence-reserved text-xs">
+                        <Clock className="h-3.5 w-3.5" />
+                        PENDING PAYMENT
+                      </span>
+                    )}
+                    {(booking.status === "CANCELLED" || booking.status === "EXPIRED" || booking.status === "REFUNDED") && (
+                      <span className="badge-confidence-cancelled text-xs">
+                        <XCircle className="h-3.5 w-3.5" />
+                        {booking.status.replace("_", " ")}
+                      </span>
+                    )}
 
-                    <span className="text-xs text-gray-400 font-mono">
+                    <span className="text-xs text-[#96817D] font-mono">
                       Ref: {booking.id.slice(0, 8)}
                     </span>
                   </div>
 
-                  <div className="text-sm text-gray-700">
-                    Booked on <span className="font-semibold">{createdInfo.dateStr}</span>
+                  <div className="text-sm text-[#4E3936]">
+                    Booked on <span className="font-semibold text-[#342523]">{createdInfo.dateStr}</span>
                   </div>
 
-                  <div className="text-sm font-semibold text-gray-900">
-                    Amount: {formatCurrency(booking.price_minor, booking.currency)}
+                  <div className="text-sm font-semibold text-[#342523]">
+                    Amount: <span className="font-editorial text-[#9B3B25] text-base">{formatCurrency(booking.price_minor, booking.currency)}</span>
                   </div>
                 </div>
 
@@ -191,7 +193,7 @@ export function BookingList({ bookings, userRole }: BookingListProps) {
                           window.location.href = checkoutRes.checkout_url;
                         }
                       }}
-                      className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 transition"
+                      className="btn-pill-primary px-5 py-2 text-sm"
                     >
                       Complete Payment
                     </button>
@@ -199,9 +201,9 @@ export function BookingList({ bookings, userRole }: BookingListProps) {
 
                   <Link
                     href={`/bookings/${booking.id}/confirmation`}
-                    className="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 transition"
+                    className="btn-pill-secondary px-4 py-2 text-xs"
                   >
-                    <ExternalLink className="h-3.5 w-3.5" /> Details
+                    <ExternalLink className="h-3.5 w-3.5 mr-1" /> View Details
                   </Link>
                 </div>
               </div>

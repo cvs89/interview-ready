@@ -121,51 +121,51 @@ export function JoinCallCard({ booking, userRole }: JoinCallCardProps) {
 
   return (
     <div
-      className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:border-blue-200 transition"
+      className="card-confidence p-6 sm:p-7 hover:border-[#ECC2A4] transition"
       data-testid={`join-call-card-${booking.id}`}
     >
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
+        <div className="space-y-2.5">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <span
-              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider ${
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-xs font-semibold ${
                 booking.status === "CONFIRMED"
-                  ? "bg-green-100 text-green-800"
+                  ? "bg-[#E8F4EC] text-[#2C6E49] border border-[#B4DEC4]"
                   : booking.status === "IN_PROGRESS"
-                    ? "bg-blue-100 text-blue-800 animate-pulse"
-                    : "bg-gray-100 text-gray-700"
+                    ? "bg-[#FDF5EE] text-[#9B3B25] border border-[#ECC2A4] animate-pulse"
+                    : "bg-[#FFFDFB] text-[#6E5652] border border-[#EADBCE]"
               }`}
             >
               <CheckCircle2 className="h-3.5 w-3.5" />
               {booking.status.replace("_", " ")}
             </span>
 
-            <span className="text-xs text-gray-400 font-mono">
+            <span className="text-xs text-[#96817D] font-mono">
               Ref: {booking.id.slice(0, 8)}
             </span>
 
-            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-medium">
+            <span className="text-xs bg-[#FDF5EE] border border-[#ECC2A4] text-[#9B3B25] px-2.5 py-0.5 rounded-full font-medium">
               {isCandidate ? "Candidate Session" : "Interviewer Session"}
             </span>
           </div>
 
-          <div className="flex items-center gap-2 text-sm text-gray-700">
-            <Calendar className="h-4 w-4 text-gray-400" />
+          <div className="flex items-center gap-2 text-sm text-[#4E3936]">
+            <Calendar className="h-4 w-4 text-[#9B3B25]" />
             <span>
-              Booked for <span className="font-semibold">{createdInfo.dateStr}</span> ({createdInfo.timeZone})
+              Booked for <span className="font-semibold text-[#342523]">{createdInfo.dateStr}</span> ({createdInfo.timeZone})
             </span>
           </div>
 
-          <div className="text-sm font-semibold text-gray-900">
-            Price: {formatCurrency(booking.price_minor, booking.currency)}
+          <div className="text-sm font-semibold text-[#342523]">
+            Price: <span className="font-editorial text-[#9B3B25] text-base">{formatCurrency(booking.price_minor, booking.currency)}</span>
           </div>
 
           {countdownText && (
             <div
-              className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-lg ${
+              className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full tabular-nums ${
                 joinStatus?.can_join
-                  ? "bg-green-50 text-green-700 border border-green-200"
-                  : "bg-gray-50 text-gray-600 border border-gray-200"
+                  ? "bg-[#E8F4EC] text-[#2C6E49] border border-[#B4DEC4]"
+                  : "bg-[#FFFDFB] text-[#6E5652] border border-[#EADBCE]"
               }`}
             >
               <Clock className="h-3.5 w-3.5" />
@@ -174,7 +174,7 @@ export function JoinCallCard({ booking, userRole }: JoinCallCardProps) {
           )}
 
           {errorMessage && (
-            <div className="flex items-center gap-1.5 text-xs text-red-600 mt-1">
+            <div className="flex items-center gap-1.5 text-xs text-[#9E2A2B] mt-1">
               <AlertCircle className="h-3.5 w-3.5 shrink-0" />
               <span>{errorMessage}</span>
             </div>
@@ -182,17 +182,17 @@ export function JoinCallCard({ booking, userRole }: JoinCallCardProps) {
         </div>
 
         {/* Join CTA Action */}
-        <div className="flex flex-col items-start md:items-end gap-2">
+        <div className="flex flex-col items-start md:items-end gap-2 shrink-0">
           {loadingStatus ? (
-            <div className="flex items-center gap-2 text-xs text-gray-400 py-2">
-              <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+            <div className="flex items-center gap-2 text-xs text-[#96817D] py-2">
+              <Loader2 className="h-4 w-4 animate-spin text-[#9B3B25]" />
               Checking window...
             </div>
           ) : joinStatus?.can_join ? (
             <button
               onClick={handleLaunchDesktop}
               disabled={isMinting}
-              className="flex items-center gap-2 rounded-xl bg-green-600 px-6 py-3 text-sm font-bold text-white shadow-md hover:bg-green-700 active:scale-95 transition disabled:opacity-50"
+              className="btn-pill-primary gap-2 py-3 px-6 text-sm font-bold shadow-md"
               data-testid={`join-interview-btn-${booking.id}`}
             >
               {isMinting ? (
@@ -208,16 +208,16 @@ export function JoinCallCard({ booking, userRole }: JoinCallCardProps) {
               )}
             </button>
           ) : (
-            <div className="flex flex-col md:items-end gap-1">
+            <div className="flex flex-col md:items-end gap-1.5">
               <button
                 disabled
-                className="flex items-center gap-2 rounded-xl bg-gray-100 border border-gray-300 px-5 py-2.5 text-sm font-semibold text-gray-400 cursor-not-allowed"
+                className="btn-pill-secondary opacity-60 cursor-not-allowed gap-2"
                 data-testid={`join-interview-disabled-btn-${booking.id}`}
               >
-                <Video className="h-4 w-4 text-gray-300" />
+                <Video className="h-4 w-4 text-[#96817D]" />
                 Join Interview Call
               </button>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-[#96817D]">
                 {joinStatus?.reason === "JOIN_WINDOW_NOT_STARTED"
                   ? "Join button enables 10 mins before call"
                   : joinStatus?.reason === "JOIN_WINDOW_EXPIRED"

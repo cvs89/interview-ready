@@ -13,29 +13,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (loading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-600 border-t-transparent" />
+      <div className="flex min-h-[60vh] items-center justify-center bg-[#FFF8F0]">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#9B3B25] border-t-transparent" />
       </div>
     );
   }
 
   if (!user || apiUser?.role !== "ADMIN") {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-16 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-red-600">
-          <AlertTriangle className="h-8 w-8" />
-        </div>
-        <h1 className="text-2xl font-bold text-gray-900">Access Denied</h1>
-        <p className="mt-2 text-sm text-gray-600">
-          You must be logged in with an administrator account to view the operations portal.
-        </p>
-        <div className="mt-6">
-          <Link
-            href="/"
-            className="inline-flex items-center rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
-          >
-            Return to Homepage
-          </Link>
+      <div className="min-h-screen bg-[#FFF8F0] flex items-center justify-center px-4 py-16">
+        <div className="mx-auto max-w-md w-full rounded-[24px] border border-[#EADBCE] bg-white p-8 sm:p-10 text-center shadow-sm">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#FCEBEB] text-[#9E2A2B]">
+            <AlertTriangle className="h-7 w-7" />
+          </div>
+          <h1 className="font-serif text-2xl font-normal text-[#342523]">Access Denied</h1>
+          <p className="mt-2 text-sm text-[#6E5652]">
+            You must be logged in with an administrator account to view the operations portal.
+          </p>
+          <div className="mt-6">
+            <Link
+              href="/"
+              className="inline-flex items-center rounded-full bg-[#9B3B25] px-6 py-2.5 text-sm font-medium text-white shadow hover:bg-[#83321F] transition"
+            >
+              Return to Homepage
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -50,26 +52,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50/50">
-      <div className="border-b border-gray-200 bg-white">
+    <div className="min-h-screen bg-[#FFF8F0]">
+      <div className="border-b border-[#EADBCE] bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100 text-purple-700">
-                <Shield className="h-6 w-6" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F8DDC9] text-[#9B3B25]">
+                <Shield className="h-5 w-5" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">Operations Control Portal</h1>
-                <p className="text-xs text-gray-500">Marketplace Administration & Monitoring</p>
+                <h1 className="font-serif text-lg font-normal text-[#342523]">Operations Control Portal</h1>
+                <p className="text-xs text-[#6E5652]">Marketplace Administration & Monitoring</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center rounded-full bg-purple-50 px-2.5 py-0.5 text-xs font-semibold text-purple-700 ring-1 ring-inset ring-purple-600/20">
+              <span className="inline-flex items-center rounded-full bg-[#FDF5EE] border border-[#ECC2A4] px-3 py-0.5 text-xs font-semibold text-[#9B3B25]">
                 Admin Role Verified
               </span>
             </div>
           </div>
-          <div className="flex space-x-8 border-t border-gray-100 pt-2 overflow-x-auto">
+          <div className="flex space-x-8 border-t border-[#EADBCE] pt-1 overflow-x-auto">
             {navItems.map((item) => {
               const active = item.exact
                 ? pathname === item.href
@@ -81,8 +83,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   href={item.href}
                   className={`flex items-center gap-2 border-b-2 py-3 text-sm font-medium transition whitespace-nowrap ${
                     active
-                      ? "border-purple-600 text-purple-600"
-                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                      ? "border-[#9B3B25] text-[#9B3B25]"
+                      : "border-transparent text-[#6E5652] hover:border-[#EADBCE] hover:text-[#342523]"
                   }`}
                 >
                   <Icon className="h-4 w-4" />

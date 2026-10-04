@@ -46,74 +46,74 @@ export default function AdminOverviewPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-xl font-bold text-gray-900">Operations Center</h2>
-        <p className="text-sm text-gray-500">
+        <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#342523]">Operations Center</h2>
+        <p className="text-sm text-[#6E5652] mt-1">
           Monitor marketplace users, interviewer approvals, bookings, and audit records.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <div className="rounded-[24px] border border-[#EADBCE] bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-500">Registered Users</span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#6E5652]">Registered Users</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F8DDC9] text-[#9B3B25]">
               <Users className="h-5 w-5" />
             </div>
           </div>
           <div className="mt-4">
             {loading ? (
-              <div className="h-8 w-16 animate-pulse rounded bg-gray-200" />
+              <div className="h-8 w-16 animate-pulse rounded-lg bg-[#FDF5EE]" />
             ) : (
-              <span className="text-3xl font-bold text-gray-900">{stats.usersCount}</span>
+              <span className="font-serif text-3xl font-normal text-[#342523]">{stats.usersCount}</span>
             )}
           </div>
           <Link
             href="/admin/users"
-            className="mt-4 flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800"
+            className="mt-4 flex items-center gap-1 text-xs font-medium text-[#9B3B25] hover:text-[#83321F]"
           >
             Manage users <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
 
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="rounded-[24px] border border-[#EADBCE] bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-500">Pending Verifications</span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#6E5652]">Pending Verifications</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FEF3E2] text-[#A65E00]">
               <CheckSquare className="h-5 w-5" />
             </div>
           </div>
           <div className="mt-4">
             {loading ? (
-              <div className="h-8 w-16 animate-pulse rounded bg-gray-200" />
+              <div className="h-8 w-16 animate-pulse rounded-lg bg-[#FDF5EE]" />
             ) : (
-              <span className="text-3xl font-bold text-gray-900">{stats.pendingVerifications}</span>
+              <span className="font-serif text-3xl font-normal text-[#342523]">{stats.pendingVerifications}</span>
             )}
           </div>
           <Link
             href="/admin/verifications"
-            className="mt-4 flex items-center gap-1 text-xs font-semibold text-amber-600 hover:text-amber-800"
+            className="mt-4 flex items-center gap-1 text-xs font-medium text-[#A65E00] hover:text-[#8E4F00]"
           >
             Review queue <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
 
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="rounded-[24px] border border-[#EADBCE] bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-500">Total Bookings</span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#6E5652]">Total Bookings</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E8F4EC] text-[#2C6E49]">
               <Video className="h-5 w-5" />
             </div>
           </div>
           <div className="mt-4">
             {loading ? (
-              <div className="h-8 w-16 animate-pulse rounded bg-gray-200" />
+              <div className="h-8 w-16 animate-pulse rounded-lg bg-[#FDF5EE]" />
             ) : (
-              <span className="text-3xl font-bold text-gray-900">{stats.bookingsCount}</span>
+              <span className="font-serif text-3xl font-normal text-[#342523]">{stats.bookingsCount}</span>
             )}
           </div>
           <Link
             href="/admin/bookings"
-            className="mt-4 flex items-center gap-1 text-xs font-semibold text-emerald-600 hover:text-emerald-800"
+            className="mt-4 flex items-center gap-1 text-xs font-medium text-[#2C6E49] hover:text-[#215236]"
           >
             Inspect bookings <ArrowRight className="h-3.5 w-3.5" />
           </Link>
@@ -121,49 +121,49 @@ export default function AdminOverviewPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="rounded-[24px] border border-[#EADBCE] bg-white p-6 sm:p-8 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FDF5EE] text-[#9B3B25]">
               <ShieldAlert className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900">Safety & Security Rules</h3>
-              <p className="text-xs text-gray-500">Administrative operational constraints</p>
+              <h3 className="font-medium text-[#342523] text-base">Safety & Security Rules</h3>
+              <p className="text-xs text-[#6E5652]">Administrative operational constraints</p>
             </div>
           </div>
-          <ul className="mt-4 space-y-2 text-xs text-gray-600">
+          <ul className="mt-4 space-y-2 text-xs text-[#6E5652]">
             <li className="flex items-start gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-purple-600 mt-1.5 shrink-0" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#9B3B25] mt-1.5 shrink-0" />
               <span>All administrative mutations (user status changes, verification reviews) are strictly audited.</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-purple-600 mt-1.5 shrink-0" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#9B3B25] mt-1.5 shrink-0" />
               <span>Credentials, secrets, and raw authentication tokens are excluded from all responses.</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-purple-600 mt-1.5 shrink-0" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#9B3B25] mt-1.5 shrink-0" />
               <span>Self-suspension and destructive operations require explicit confirmations.</span>
             </li>
           </ul>
         </div>
 
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="rounded-[24px] border border-[#EADBCE] bg-white p-6 sm:p-8 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F8DDC9] text-[#9B3B25]">
               <FileText className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900">Audit Trail</h3>
-              <p className="text-xs text-gray-500">System mutations and verification history</p>
+              <h3 className="font-medium text-[#342523] text-base">Audit Trail</h3>
+              <p className="text-xs text-[#6E5652]">System mutations and verification history</p>
             </div>
           </div>
-          <p className="mt-4 text-xs text-gray-600">
+          <p className="mt-4 text-xs text-[#6E5652] leading-relaxed">
             Every critical lifecycle event and administrative action is logged with actor identification, request context, and change metadata.
           </p>
           <div className="mt-6">
             <Link
               href="/admin/audit-logs"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 shadow-sm"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#EADBCE] bg-white px-4 py-2 text-xs font-medium text-[#342523] hover:bg-[#FDF5EE] shadow-sm transition"
             >
               View System Audit Logs <ArrowRight className="h-3.5 w-3.5" />
             </Link>

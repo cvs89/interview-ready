@@ -52,31 +52,33 @@ function SignInContent() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-[#FFF8F0]">
+      <div className="w-full max-w-md space-y-8 rounded-[24px] border border-[#EADBCE] bg-white p-8 sm:p-10 shadow-sm">
         <div className="text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600 mb-3">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#F8DDC9] text-[#9B3B25] mb-4">
             <LogIn className="h-6 w-6" />
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">Sign in to your account</h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <h2 className="font-serif text-3xl font-normal tracking-tight text-[#342523]">
+            Sign in to your account
+          </h2>
+          <p className="mt-2 text-sm text-[#6E5652]">
             Or{" "}
-            <Link href="/auth/sign-up" className="font-semibold text-blue-600 hover:text-blue-500">
+            <Link href="/auth/sign-up" className="font-medium text-[#9B3B25] hover:text-[#83321F] underline-offset-4 hover:underline">
               create a new account
             </Link>
           </p>
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800" role="alert">
-            <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
+          <div className="flex items-center gap-2 rounded-2xl border border-red-200 bg-[#FCEBEB] p-3.5 text-sm text-[#9E2A2B]" role="alert">
+            <AlertCircle className="h-4 w-4 shrink-0 text-[#9E2A2B]" />
             <span>{error}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <div>
-            <label htmlFor="email" className="block text-xs font-semibold uppercase text-gray-700 mb-1">
+            <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-[#6E5652] mb-1.5">
               Email Address
             </label>
             <input
@@ -86,13 +88,13 @@ function SignInContent() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-xl border border-[#EADBCE] bg-[#FFFDFB] px-3.5 py-2.5 text-sm text-[#342523] placeholder-[#96817D] focus:border-[#9B3B25] focus:outline-none focus:ring-1 focus:ring-[#9B3B25]"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-xs font-semibold uppercase text-gray-700 mb-1">
+            <label htmlFor="password" className="block text-xs font-semibold uppercase tracking-wider text-[#6E5652] mb-1.5">
               Password
             </label>
             <input
@@ -102,7 +104,7 @@ function SignInContent() {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-xl border border-[#EADBCE] bg-[#FFFDFB] px-3.5 py-2.5 text-sm text-[#342523] placeholder-[#96817D] focus:border-[#9B3B25] focus:outline-none focus:ring-1 focus:ring-[#9B3B25]"
               placeholder="••••••••"
             />
           </div>
@@ -110,7 +112,7 @@ function SignInContent() {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-blue-700 transition disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-[#9B3B25] px-6 py-3 text-sm font-medium text-white shadow hover:bg-[#83321F] active:bg-[#6D2919] transition disabled:opacity-50 mt-2"
           >
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -124,10 +126,10 @@ function SignInContent() {
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200" />
+            <div className="w-full border-t border-[#EADBCE]" />
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-gray-400 font-medium">Or continue with</span>
+          <div className="relative flex justify-center text-xs uppercase tracking-wider">
+            <span className="bg-white px-3 text-[#96817D] font-medium">Or continue with</span>
           </div>
         </div>
 
@@ -135,7 +137,7 @@ function SignInContent() {
           type="button"
           onClick={handleGoogleSignIn}
           disabled={loading}
-          className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-3 rounded-full border border-[#EADBCE] bg-white px-4 py-2.5 text-sm font-medium text-[#342523] shadow-sm hover:bg-[#FDF5EE] transition disabled:opacity-50"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path
@@ -166,8 +168,8 @@ export default function SignInPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-[#FFF8F0]">
+          <Loader2 className="h-8 w-8 animate-spin text-[#9B3B25]" />
         </div>
       }
     >
