@@ -7,9 +7,9 @@
 | `APP_NAME` | Service display name | `Interview Ready API` | Plain |
 | `APP_ENV` | Runtime environment (`development`, `test`, `staging`, `production`) | `development` | Plain |
 | `LOG_LEVEL` | Log verbosity (`DEBUG`, `INFO`, `WARNING`, `ERROR`) | `INFO` | Plain |
-| `DATABASE_URL` | PostgreSQL connection string (asyncpg driver) | `postgresql+asyncpg://...` | **Secret** |
-| `REDIS_URL` | Redis connection URL | `redis://...` | **Secret** |
-| `WEB_ORIGINS` | Allowed CORS origins (comma-separated or JSON list) | `http://localhost:3000` | Plain |
+| `DATABASE_URL` | PostgreSQL connection string (asyncpg driver). For Cloud Run via Unix socket: `postgresql+asyncpg://<USER>:<PASS>@/interview_ready?host=/cloudsql/<PROJECT>:<REGION>:<INSTANCE>` | `postgresql+asyncpg://...` | **Secret** |
+| `REDIS_URL` | Redis connection URL. For Upstash: Must use TLS scheme `rediss://default:<PASS>@<HOST>:6379` | `rediss://...` | **Secret** |
+| `WEB_ORIGINS` | Allowed CORS origins (comma-separated or JSON list). Include your Cloud Run Web URL: `https://interview-ready-webnew-153072465008.europe-west1.run.app` | `http://localhost:3000` | Plain |
 | `RESERVATION_TTL_MINUTES` | Temporary slot reservation expiry window | `10` | Plain |
 | `WEBHOOK_SIGNING_SECRET` | Secret key for verifying payment provider HMAC signatures | `local_dev_secret` | **Secret** |
 | `PAYMENT_PROVIDER` | Active payment processor implementation (`mock`, `stripe`, `razorpay`) | `mock` | Plain |
