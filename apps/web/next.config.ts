@@ -7,9 +7,9 @@ const cspHeader = `
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   img-src 'self' blob: data: https://*.googleusercontent.com https://*.firebaseapp.com;
   font-src 'self' https://fonts.gstatic.com data:;
-  connect-src 'self' http://localhost:8000 https://*.googleapis.com https://*.firebaseio.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.livekit.cloud wss://*.livekit.cloud;
+  connect-src 'self' http://localhost:8000 https://*.run.app https://*.a.run.app https://*.googleapis.com https://*.firebaseio.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.livekit.cloud wss://*.livekit.cloud;
   media-src 'self' blob: data:;
-  frame-src 'self' https://*.firebaseapp.com;
+  frame-src 'self' https://*.firebaseapp.com https://accounts.google.com;
   frame-ancestors 'none';
   form-action 'self';
   base-uri 'self';
