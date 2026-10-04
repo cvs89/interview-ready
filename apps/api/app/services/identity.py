@@ -4,8 +4,9 @@ from typing import Any
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import get_settings
 from app.core.errors import ApiError
-from app.models.identity import User, UserStatus
+from app.models.identity import User, UserRole, UserStatus
 from app.repositories.users import UserRepository
 
 
@@ -51,11 +52,15 @@ class IdentityService:
     async def authenticate(self, claims: dict[str, Any]) -> User:
         identity = Identity.from_verified_token(claims)
         user = await self.users.get_by_firebase_uid(identity.firebase_uid)
+        is_admin = identity.email in get_settings().admin_emails
+
         if user is not None:
             if user.status == UserStatus.DISABLED:
                 raise ApiError("ACCOUNT_DISABLED", "This account has been disabled.", 403)
             if user.status == UserStatus.SUSPENDED:
                 raise ApiError("ACCOUNT_SUSPENDED", "This account has been suspended.", 403)
+            if is_admin and user.role != UserRole.ADMIN:
+                user.role = UserRole.ADMIN
             self.users.update_login_metadata(
                 user,
                 email_verified=identity.email_verified,
@@ -77,6 +82,7 @@ class IdentityService:
             full_name=identity.full_name,
             email_verified=identity.email_verified,
             auth_provider=identity.auth_provider,
+            role=UserRole.ADMIN if is_admin else UserRole.CANDIDATE,
         )
         try:
             return await self.users.commit_and_refresh(user)

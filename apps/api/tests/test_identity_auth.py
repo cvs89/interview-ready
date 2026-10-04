@@ -203,3 +203,17 @@ def test_ownership_guard_allows_owner_or_admin_only() -> None:
     candidate.id = uuid.uuid4()
     candidate.role = UserRole.ADMIN
     ensure_owner_or_role(owner_id, candidate, UserRole.ADMIN)
+
+
+@pytest.mark.asyncio
+async def test_admin_email_is_granted_admin_role(auth_context: AuthContext, monkeypatch: pytest.MonkeyPatch) -> None:
+    client, _, claims = auth_context
+    claims["email"] = "narukakomal27@gmail.com"
+    claims["uid"] = "admin-firebase-uid"
+    headers = {"Authorization": "Bearer valid"}
+    response = await client.get("/auth/me", headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["role"] == "ADMIN"
+    assert data["email"] == "narukakomal27@gmail.com"
+

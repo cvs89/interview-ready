@@ -66,12 +66,13 @@ class UserRepository:
         full_name: str,
         email_verified: bool,
         auth_provider: str | None,
+        role: UserRole = UserRole.CANDIDATE,
     ) -> User:
         user = User(
             firebase_uid=firebase_uid,
             email=email,
             full_name=full_name,
-            role=UserRole.CANDIDATE,
+            role=role,
             status=UserStatus.ACTIVE,
             email_verified=email_verified,
             auth_provider=auth_provider,

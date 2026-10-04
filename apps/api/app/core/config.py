@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     )
     redis_url: str = "redis://localhost:6379/0"
     web_origins: Annotated[list[str], NoDecode] = ["http://localhost:3000"]
+    admin_emails: Annotated[list[str], NoDecode] = ["narukakomal27@gmail.com"]
     reservation_ttl_minutes: int = 10
     webhook_signing_secret: str = "local_dev_webhook_signing_secret"
     payment_provider: str = "mock"
@@ -56,6 +57,15 @@ class Settings(BaseSettings):
     def parse_origins(cls, value: object) -> object:
         if isinstance(value, str) and not value.startswith("["):
             return [origin.strip() for origin in value.split(",") if origin.strip()]
+        return value
+
+    @field_validator("admin_emails", mode="before")
+    @classmethod
+    def parse_admin_emails(cls, value: object) -> object:
+        if isinstance(value, str) and not value.startswith("["):
+            return [email.strip().casefold() for email in value.split(",") if email.strip()]
+        if isinstance(value, list):
+            return [str(e).strip().casefold() for e in value if str(e).strip()]
         return value
 
 
