@@ -34,7 +34,9 @@ class DocumentParserService:
     ) -> ParsedProfileDocumentResponse:
         text = cls.extract_text(file_bytes, filename)
         if not text:
-            return ParsedProfileDocumentResponse(raw_preview="Could not extract text from document.")
+            return ParsedProfileDocumentResponse(
+                raw_preview="Could not extract text from document."
+            )
 
         settings = get_settings()
         if settings.gemini_api_key:
@@ -48,15 +50,20 @@ class DocumentParserService:
     async def _parse_with_gemini(
         cls, text: str, api_key: str
     ) -> ParsedProfileDocumentResponse | None:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+        url = (
+            "https://generativelanguage.googleapis.com/v1beta/models/"
+            f"gemini-2.5-flash:generateContent?key={api_key}"
+        )
         prompt = (
-            "You are an expert technical resume & LinkedIn profile parser for an engineering mock interview platform.\n"
-            "Analyze the provided text from a LinkedIn profile / resume and return JSON matching this schema:\n"
+            "You are an expert technical resume & LinkedIn profile parser for an engineering "
+            "mock interview platform.\n"
+            "Analyze the provided text from a LinkedIn profile / resume and return JSON matching "
+            "this schema:\n"
             "{\n"
-            '  "title": string (current or highest engineering title & company, e.g. "Staff Software Engineer @ Google"),\n'
-            '  "bio": string (concise 2-3 sentence summary of engineering expertise, architecture/systems experience, and mentoring background),\n'
-            '  "years_experience": integer (estimated total years of professional engineering experience),\n'
-            '  "skills": list of strings (key technical domains e.g. ["System Design", "Distributed Systems", "Python", "Kubernetes"]),\n'
+            '  "title": string (e.g. "Staff Software Engineer @ Google"),\n'
+            '  "bio": string (concise 2-3 sentence summary of expertise and background),\n'
+            '  "years_experience": integer (total years of engineering experience),\n'
+            '  "skills": list of strings (e.g. ["System Design", "Python", "Kubernetes"]),\n'
             '  "suggested_rate": integer (suggested hourly mock interview rate in INR e.g. 5000),\n'
             '  "suggested_currency": "INR"\n'
             "}\n\n"
@@ -150,7 +157,9 @@ class DocumentParserService:
             "Rust",
         ]
         skills_detected = [
-            skill for skill in known_skills if re.search(r"\b" + re.escape(skill) + r"\b", text, re.IGNORECASE)
+            skill
+            for skill in known_skills
+            if re.search(r"\b" + re.escape(skill) + r"\b", text, re.IGNORECASE)
         ]
 
         # Heuristic 4: Summary / Bio
@@ -158,7 +167,10 @@ class DocumentParserService:
         bio = (
             " ".join(summary_lines)
             if summary_lines
-            else f"Experienced {title} with {years_exp}+ years in software engineering and system architecture."
+            else (
+                f"Experienced {title} with {years_exp}+ years in software engineering "
+                "and system architecture."
+            )
         )
         if len(bio) > 1000:
             bio = bio[:997] + "..."

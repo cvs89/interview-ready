@@ -3,10 +3,12 @@ import uuid
 from collections.abc import AsyncIterator
 from datetime import UTC, datetime, timedelta
 from typing import Annotated, TypeAlias
+from unittest.mock import MagicMock, patch
 
 import httpx
 import pytest
 import pytest_asyncio
+import stripe
 from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
@@ -15,7 +17,10 @@ from app.core.auth import get_current_user
 from app.core.config import Settings
 from app.db.base import Base
 from app.db.session import get_session
-from app.integrations.payments import MockPaymentProvider
+from app.integrations.payments import (
+    MockPaymentProvider,
+    StripePaymentProvider,
+)
 from app.main import create_app
 from app.models.availability import AvailabilitySlot, AvailabilityStatus
 from app.models.booking import Booking, BookingStatus, Payment, PaymentStatus
@@ -94,6 +99,8 @@ async def booking_context() -> AsyncIterator[BookingTestContext]:
         reservation_ttl_minutes=10,
         webhook_signing_secret="test_secret_key_12345",
         payment_provider="mock",
+        stripe_secret_key="sk_test_fake_stripe_secret_key_123",
+        stripe_webhook_secret="whsec_test_stripe_webhook_secret_12345",
     )
     app = create_app(settings)
     payment_provider = MockPaymentProvider(secret=settings.webhook_signing_secret)
@@ -657,3 +664,232 @@ async def test_booking_cancellation_and_refund_lifecycle(
         db_slot2 = await session.get(AvailabilitySlot, slot2.id)
         assert db_slot2 is not None
         assert db_slot2.status == AvailabilityStatus.AVAILABLE
+
+
+@pytest.mark.asyncio
+async def test_stripe_checkout_success(
+    booking_context: BookingTestContext,
+) -> None:
+    client, session_factory, current, ids, _ = booking_context
+    slot = await create_slot_in_db(session_factory, ids["profile_id"], price_minor=25_000)
+
+    current["user_id"] = ids["candidate_1"]
+    reserve_res = await client.post("/api/v1/bookings/reserve", json={"slot_id": str(slot.id)})
+    assert reserve_res.status_code == 201
+    booking_id = reserve_res.json()["id"]
+
+    mock_session = MagicMock()
+    mock_session.id = "cs_test_stripe_checkout_123"
+    mock_session.url = "https://checkout.stripe.com/c/pay/cs_test_stripe_checkout_123"
+    mock_session.payment_intent = "pi_test_stripe_intent_123"
+    mock_session.expires_at = int((datetime.now(UTC) + timedelta(minutes=30)).timestamp())
+    mock_session.to_dict = MagicMock(return_value={"id": mock_session.id})
+
+    with patch("stripe.checkout.Session.create", return_value=mock_session) as mock_create:
+        checkout_res = await client.post(
+            f"/api/v1/payments/{booking_id}/checkout",
+            json={
+                "provider": "stripe",
+                "success_url": "http://frontend/success",
+                "cancel_url": "http://frontend/cancel",
+            },
+        )
+        assert checkout_res.status_code == 200, checkout_res.text
+        checkout_data = checkout_res.json()
+        assert checkout_data["booking_id"] == booking_id
+        assert checkout_data["provider"] == "stripe"
+        expected_url = "https://checkout.stripe.com/c/pay/cs_test_stripe_checkout_123"
+        assert checkout_data["checkout_url"] == expected_url
+        assert checkout_data["provider_checkout_session_id"] == "cs_test_stripe_checkout_123"
+        assert checkout_data["amount_minor"] == 25_000
+        assert checkout_data["currency"] == "INR"
+        assert checkout_data["status"] == "PENDING"
+        mock_create.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_stripe_webhook_checkout_session_completed_confirms_booking(
+    booking_context: BookingTestContext,
+) -> None:
+    client, session_factory, current, ids, _ = booking_context
+    slot = await create_slot_in_db(session_factory, ids["profile_id"], price_minor=15_000)
+
+    current["user_id"] = ids["candidate_1"]
+    reserve_res = await client.post("/api/v1/bookings/reserve", json={"slot_id": str(slot.id)})
+    booking_id = reserve_res.json()["id"]
+
+    payment_intent_id = f"pi_test_{uuid.uuid4().hex}"
+    event_payload = {
+        "id": f"evt_test_{uuid.uuid4().hex}",
+        "object": "event",
+        "type": "checkout.session.completed",
+        "data": {
+            "object": {
+                "id": f"cs_test_{uuid.uuid4().hex}",
+                "client_reference_id": booking_id,
+                "payment_status": "paid",
+                "amount_total": 15_000,
+                "currency": "inr",
+                "payment_intent": payment_intent_id,
+                "metadata": {"booking_id": booking_id},
+            }
+        },
+    }
+    payload_str = json.dumps(event_payload)
+    payload_bytes = payload_str.encode("utf-8")
+    secret = "whsec_test_stripe_webhook_secret_12345"
+    now_ts = int(datetime.now(UTC).timestamp())
+    sig = stripe.WebhookSignature._compute_signature(f"{now_ts}.{payload_str}", secret)
+    sig_header = f"t={now_ts},v1={sig}"
+
+    webhook_res = await client.post(
+        "/api/v1/webhooks/payments/stripe",
+        content=payload_bytes,
+        headers={
+            "Content-Type": "application/json",
+            "Stripe-Signature": sig_header,
+        },
+    )
+    assert webhook_res.status_code == 200, webhook_res.text
+    assert webhook_res.json()["status"] == "processed"
+
+    # Verify DB state
+    async with session_factory() as session:
+        booking = await session.get(Booking, uuid.UUID(booking_id))
+        assert booking is not None
+        assert booking.status == BookingStatus.CONFIRMED
+        assert booking.confirmed_at is not None
+
+        db_slot = await session.get(AvailabilitySlot, slot.id)
+        assert db_slot is not None
+        assert db_slot.status == AvailabilityStatus.BOOKED
+
+        payment = (
+            await session.execute(
+                select(Payment).where(Payment.booking_id == uuid.UUID(booking_id))
+            )
+        ).scalar_one_or_none()
+        assert payment is not None
+        assert payment.provider == "stripe"
+        assert payment.status == PaymentStatus.PAID
+        assert payment.amount_minor == 15_000
+        assert payment.provider_payment_id == payment_intent_id
+
+
+@pytest.mark.asyncio
+async def test_stripe_webhook_invalid_signature_rejected(
+    booking_context: BookingTestContext,
+) -> None:
+    client, session_factory, current, ids, _ = booking_context
+    slot = await create_slot_in_db(session_factory, ids["profile_id"], price_minor=15_000)
+
+    current["user_id"] = ids["candidate_1"]
+    reserve_res = await client.post("/api/v1/bookings/reserve", json={"slot_id": str(slot.id)})
+    booking_id = reserve_res.json()["id"]
+
+    event_payload = {
+        "id": "evt_tampered_123",
+        "object": "event",
+        "type": "checkout.session.completed",
+        "data": {
+            "object": {
+                "id": "cs_test_123",
+                "client_reference_id": booking_id,
+                "payment_status": "paid",
+                "amount_total": 15_000,
+                "currency": "inr",
+                "metadata": {"booking_id": booking_id},
+            }
+        },
+    }
+    payload_bytes = json.dumps(event_payload).encode("utf-8")
+
+    webhook_res = await client.post(
+        "/api/v1/webhooks/payments/stripe",
+        content=payload_bytes,
+        headers={
+            "Content-Type": "application/json",
+            "Stripe-Signature": "t=1700000000,v1=tampered_signature_hex",
+        },
+    )
+    assert webhook_res.status_code == 400
+    assert webhook_res.json()["error"]["code"] == "INVALID_WEBHOOK_SIGNATURE"
+
+
+@pytest.mark.asyncio
+async def test_stripe_webhook_amount_mismatch_rejected(
+    booking_context: BookingTestContext,
+) -> None:
+    client, session_factory, current, ids, _ = booking_context
+    slot = await create_slot_in_db(session_factory, ids["profile_id"], price_minor=15_000)
+
+    current["user_id"] = ids["candidate_1"]
+    reserve_res = await client.post("/api/v1/bookings/reserve", json={"slot_id": str(slot.id)})
+    booking_id = reserve_res.json()["id"]
+
+    # Candidate was charged 9_999 instead of expected 15_000
+    event_payload = {
+        "id": f"evt_test_{uuid.uuid4().hex}",
+        "object": "event",
+        "type": "checkout.session.completed",
+        "data": {
+            "object": {
+                "id": f"cs_test_{uuid.uuid4().hex}",
+                "client_reference_id": booking_id,
+                "payment_status": "paid",
+                "amount_total": 9_999,
+                "currency": "inr",
+                "payment_intent": f"pi_test_{uuid.uuid4().hex}",
+                "metadata": {"booking_id": booking_id},
+            }
+        },
+    }
+    payload_str = json.dumps(event_payload)
+    payload_bytes = payload_str.encode("utf-8")
+    secret = "whsec_test_stripe_webhook_secret_12345"
+    now_ts = int(datetime.now(UTC).timestamp())
+    sig = stripe.WebhookSignature._compute_signature(f"{now_ts}.{payload_str}", secret)
+    sig_header = f"t={now_ts},v1={sig}"
+
+    webhook_res = await client.post(
+        "/api/v1/webhooks/payments/stripe",
+        content=payload_bytes,
+        headers={
+            "Content-Type": "application/json",
+            "Stripe-Signature": sig_header,
+        },
+    )
+    assert webhook_res.status_code == 400
+    assert webhook_res.json()["error"]["code"] == "PAYMENT_AMOUNT_MISMATCH"
+
+
+@pytest.mark.asyncio
+async def test_stripe_refund_unit() -> None:
+    provider = StripePaymentProvider(
+        secret_key="sk_test_fake_secret_key",
+        webhook_secret="whsec_test_fake_webhook_secret",
+    )
+    mock_refund = MagicMock()
+    mock_refund.id = "re_test_stripe_123"
+    mock_refund.amount = 15_000
+    mock_refund.currency = "inr"
+    mock_refund.status = "succeeded"
+    mock_refund.to_dict = MagicMock(return_value={"id": mock_refund.id})
+
+    with patch("stripe.Refund.create", return_value=mock_refund) as mock_create:
+        res = await provider.refund(
+            provider_payment_id="pi_test_stripe_intent_123",
+            amount_minor=15_000,
+            currency="INR",
+            reason="requested_by_customer",
+        )
+        assert res.refund_id == "re_test_stripe_123"
+        assert res.amount_minor == 15_000
+        assert res.currency == "INR"
+        assert res.status == "succeeded"
+        mock_create.assert_called_once_with(
+            amount=15_000,
+            api_key="sk_test_fake_secret_key",
+            payment_intent="pi_test_stripe_intent_123",
+            reason="requested_by_customer",
+        )

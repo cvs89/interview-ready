@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     reservation_ttl_minutes: int = 10
     webhook_signing_secret: str = "local_dev_webhook_signing_secret"
     payment_provider: str = "mock"
+    stripe_secret_key: str | None = None
+    stripe_publishable_key: str | None = None
+    stripe_webhook_secret: str | None = None
 
     # Module 05: Desktop ticket, Session JWT, and LiveKit configuration
     desktop_ticket_ttl_seconds: int = 60

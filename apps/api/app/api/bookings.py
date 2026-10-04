@@ -89,7 +89,9 @@ async def create_checkout(
 ) -> PaymentCheckoutResponse:
     settings = getattr(raw_request.app.state, "settings", None)
     req = request or PaymentCheckoutRequest()
-    return await PaymentService(session, settings=settings).create_checkout(user, booking_id, req)
+    return await PaymentService(session, settings=settings).create_checkout(
+        user, booking_id, req, provider_name=req.provider
+    )
 
 
 @webhooks_router.post("/{provider}", response_model=WebhookEventResponse)

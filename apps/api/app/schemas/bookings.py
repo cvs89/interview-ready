@@ -34,6 +34,7 @@ class BookingResponse(BaseModel):
 class PaymentCheckoutRequest(BaseModel):
     success_url: str | None = None
     cancel_url: str | None = None
+    provider: str | None = None
 
 
 class PaymentCheckoutResponse(BaseModel):

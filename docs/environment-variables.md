@@ -12,8 +12,11 @@
 | `WEB_ORIGINS` | Allowed CORS origins (comma-separated or JSON list). Include your Cloud Run Web URL: `https://interview-ready-webnew-153072465008.europe-west1.run.app` | `http://localhost:3000` | Plain |
 | `ADMIN_EMAILS` | Comma-separated list of emails that automatically receive `ADMIN` role upon login | `narukakomal27@gmail.com` | Plain |
 | `RESERVATION_TTL_MINUTES` | Temporary slot reservation expiry window | `10` | Plain |
-| `WEBHOOK_SIGNING_SECRET` | Secret key for verifying payment provider HMAC signatures | `local_dev_secret` | **Secret** |
-| `PAYMENT_PROVIDER` | Active payment processor implementation (`mock`, `stripe`, `razorpay`) | `mock` | Plain |
+| `WEBHOOK_SIGNING_SECRET` | Secret key for verifying mock/generic payment provider HMAC signatures | `local_dev_secret` | **Secret** |
+| `PAYMENT_PROVIDER` | Active payment processor implementation (`mock`, `stripe`) | `mock` | Plain |
+| `STRIPE_SECRET_KEY` | Stripe API Secret Key (`sk_test_...` or `sk_live_...`) | `sk_test_...` | **Secret** |
+| `STRIPE_PUBLISHABLE_KEY` | Stripe Publishable Key (`pk_test_...` or `pk_live_...`) | `pk_test_...` | Plain |
+| `STRIPE_WEBHOOK_SECRET` | Stripe Webhook Endpoint Signing Secret (`whsec_...`) | `whsec_...` | **Secret** |
 | `DESKTOP_TICKET_TTL_SECONDS`| Lifetime of one-time desktop authentication ticket in Redis | `60` | Plain |
 | `JOIN_WINDOW_LEAD_MINUTES` | Time before slot start when room join becomes permissible | `10` | Plain |
 | `JOIN_WINDOW_GRACE_MINUTES`| Time after slot end before room join access is revoked | `30` | Plain |

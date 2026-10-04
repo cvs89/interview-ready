@@ -63,8 +63,8 @@ async def update_profile(
 
 @router.post("/interviewers/me/parse-document", response_model=ParsedProfileDocumentResponse)
 async def parse_profile_document(
-    file: UploadFile = File(...),
-    _: CurrentUser = None,
+    file: Annotated[UploadFile, File()],
+    _: CurrentUser,
 ) -> ParsedProfileDocumentResponse:
     content = await file.read()
     return await DocumentParserService.parse_profile_document(
