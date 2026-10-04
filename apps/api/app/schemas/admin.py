@@ -43,6 +43,7 @@ class AdminInterviewerVerificationResponse(BaseModel):
     email: str
     title: str | None = None
     years_experience: int | None = None
+    linkedin_url: str | None = None
     status: str
     submitted_at: datetime | None = None
     reviewed_at: datetime | None = None

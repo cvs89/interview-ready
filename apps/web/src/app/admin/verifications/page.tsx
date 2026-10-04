@@ -1,7 +1,7 @@
 "use client";
 
 import type { AdminInterviewerVerificationResponse, AdminVerificationListResponse } from "@interview-ready/api-types";
-import { AlertCircle, CheckCircle, Clock, Filter, RefreshCw, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, Clock, ExternalLink, Filter, RefreshCw, XCircle } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 
 import { useAuth } from "../../../context/AuthContext";
@@ -182,7 +182,21 @@ export default function AdminVerificationsPage() {
                   <tr key={v.id} className="hover:bg-gray-50/50 transition">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
-                        <div className="font-medium text-gray-900">{v.full_name}</div>
+                        <div className="font-medium text-gray-900 flex items-center gap-2">
+                          <span>{v.full_name}</span>
+                          {v.linkedin_url && (
+                            <a
+                              href={v.linkedin_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold text-blue-700 hover:bg-blue-100 transition"
+                              title="Verify LinkedIn Profile"
+                            >
+                              <span>LinkedIn</span>
+                              <ExternalLink className="h-2.5 w-2.5" />
+                            </a>
+                          )}
+                        </div>
                         <div className="text-xs text-gray-500">{v.email}</div>
                       </div>
                     </td>
@@ -261,6 +275,19 @@ export default function AdminVerificationsPage() {
               <div>
                 <h3 className="text-base font-semibold text-gray-900">Review Interviewer Application</h3>
                 <p className="text-xs text-gray-500">{selectedVerif.full_name} ({selectedVerif.email})</p>
+                {selectedVerif.linkedin_url && (
+                  <p className="text-xs mt-1">
+                    <a
+                      href={selectedVerif.linkedin_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 font-semibold text-blue-600 hover:underline"
+                    >
+                      <span>Open Applicant&apos;s LinkedIn Profile</span>
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </p>
+                )}
               </div>
             </div>
 

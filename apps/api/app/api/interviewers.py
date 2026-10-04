@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, Response, status
+from fastapi import APIRouter, Depends, File, Query, Response, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth import get_current_user, require_role
@@ -16,6 +16,7 @@ from app.schemas.interviewers import (
     AvailabilitySlotResponse,
     AvailabilitySlotUpdateRequest,
     InterviewerSkillRequest,
+    ParsedProfileDocumentResponse,
     ProfileResponse,
     ProfileUpsertRequest,
     SkillCreateRequest,
@@ -23,6 +24,7 @@ from app.schemas.interviewers import (
     VerificationResponse,
     VerificationReviewRequest,
 )
+from app.services.document_parser import DocumentParserService
 from app.services.interviewers import InterviewerService
 
 router = APIRouter(tags=["interviewers"])
@@ -57,6 +59,17 @@ async def update_profile(
     request: ProfileUpsertRequest, user: CurrentUser, session: Session
 ) -> ProfileResponse:
     return await InterviewerService(session).update_profile(user, request)
+
+
+@router.post("/interviewers/me/parse-document", response_model=ParsedProfileDocumentResponse)
+async def parse_profile_document(
+    file: UploadFile = File(...),
+    _: CurrentUser = None,
+) -> ParsedProfileDocumentResponse:
+    content = await file.read()
+    return await DocumentParserService.parse_profile_document(
+        content, file.filename or "profile.pdf"
+    )
 
 
 @router.post("/interviewers/me/verification", response_model=VerificationResponse)

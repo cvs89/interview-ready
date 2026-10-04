@@ -18,6 +18,7 @@ class ProfileUpsertRequest(BaseModel):
     years_experience: Annotated[int | None, Field(ge=0, le=80)] = None
     default_rate_minor: Annotated[int | None, Field(ge=0)] = None
     currency: Currency | None = None
+    linkedin_url: Annotated[str | None, Field(max_length=500)] = None
 
     @model_validator(mode="after")
     def validate_default_price_pair(self) -> Self:
@@ -28,6 +29,16 @@ class ProfileUpsertRequest(BaseModel):
         if price_set and (self.default_rate_minor is None) != (self.currency is None):
             raise ValueError("default_rate_minor and currency must both be set or both be null")
         return self
+
+
+class ParsedProfileDocumentResponse(BaseModel):
+    title: str | None = None
+    bio: str | None = None
+    years_experience: int | None = None
+    skills: list[str] = Field(default_factory=list)
+    suggested_rate_minor: int | None = None
+    suggested_currency: str | None = None
+    raw_preview: str | None = None
 
 
 class SkillCreateRequest(BaseModel):
@@ -63,6 +74,7 @@ class ProfileResponse(BaseModel):
     years_experience: int | None
     default_rate_minor: int | None
     currency: str | None
+    linkedin_url: str | None = None
     is_verified: bool
     verification_status: VerificationStatus
     skills: list[InterviewerSkillResponse]

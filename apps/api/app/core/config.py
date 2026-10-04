@@ -51,6 +51,7 @@ class Settings(BaseSettings):
     gcp_project_id: str | None = None
     gcs_bucket_name: str | None = None
     gcs_signed_url_ttl_seconds: int = 3600
+    gemini_api_key: str | None = None
 
     @field_validator("web_origins", mode="before")
     @classmethod

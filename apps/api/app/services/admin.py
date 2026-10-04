@@ -119,6 +119,7 @@ class AdminService:
                     email=user.email if user else "Unknown",
                     title=v.interviewer.title if v.interviewer else None,
                     years_experience=v.interviewer.years_experience if v.interviewer else None,
+                    linkedin_url=v.interviewer.linkedin_url if v.interviewer else None,
                     status=v.status.value if hasattr(v.status, "value") else str(v.status),
                     submitted_at=v.submitted_at,
                     reviewed_at=v.reviewed_at,

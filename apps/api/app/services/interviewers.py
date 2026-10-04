@@ -54,6 +54,7 @@ class InterviewerService:
             years_experience=profile.years_experience,
             default_rate_minor=profile.default_rate_minor,
             currency=profile.currency,
+            linkedin_url=profile.linkedin_url,
             is_verified=profile.is_verified,
             verification_status=verification_status,
             skills=skills,

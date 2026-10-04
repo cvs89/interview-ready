@@ -349,3 +349,50 @@ async def test_discovery_filters_and_hides_verification_notes(
     public_profile = await client.get(f"/interviewers/{first_profile}")
     assert "notes" not in public_profile.json()
     assert "email" not in public_profile.json()
+
+
+@pytest.mark.asyncio
+async def test_parse_profile_document_endpoint(
+    marketplace_context: MarketplaceContext,
+) -> None:
+    client, _, current, ids = marketplace_context
+    current["user_id"] = ids["first"]
+
+    resume_text = (
+        "Jane Doe\n"
+        "Staff Software Engineer at Google\n"
+        "Experience: 2016 - 2026\n"
+        "Expert in System Design, Python, Distributed Systems, and Kubernetes.\n"
+        "Conducted 100+ technical interviews."
+    )
+    files = {"file": ("linkedin_profile.txt", resume_text.encode("utf-8"), "text/plain")}
+    response = await client.post("/interviewers/me/parse-document", files=files)
+    assert response.status_code == 200
+    data = response.json()
+    assert "Staff Software Engineer" in data["title"]
+    assert data["years_experience"] >= 5
+    assert "Python" in data["skills"]
+    assert "System Design" in data["skills"]
+
+
+@pytest.mark.asyncio
+async def test_profile_linkedin_url(
+    marketplace_context: MarketplaceContext,
+) -> None:
+    client, _, current, ids = marketplace_context
+    current["user_id"] = ids["first"]
+
+    res = await client.post(
+        "/interviewers/me/profile",
+        json={
+            "title": "Principal Architect",
+            "bio": "Expert interviewer",
+            "years_experience": 12,
+            "default_rate_minor": 800_000,
+            "currency": "INR",
+            "linkedin_url": "https://www.linkedin.com/in/janedoe",
+        },
+    )
+    assert res.status_code == 201
+    assert res.json()["linkedin_url"] == "https://www.linkedin.com/in/janedoe"
+

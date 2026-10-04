@@ -4,6 +4,7 @@ import type {
   AvailabilitySlot,
   Booking,
   InterviewerProfile,
+  ParsedProfileDocumentResponse,
   Skill,
 } from "@interview-ready/api-types";
 import {
@@ -12,13 +13,17 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
+  ExternalLink,
+  FileText,
   Loader2,
   Plus,
   RefreshCw,
   ShieldAlert,
   ShieldCheck,
+  Sparkles,
   Tag,
   Trash2,
+  Upload,
   UserCheck,
   Video,
 } from "lucide-react";
@@ -33,7 +38,7 @@ type TabType = "profile" | "skills" | "slots" | "bookings";
 
 export default function InterviewerPortalPage() {
   const router = useRouter();
-  const { user, api, loading: authLoading } = useAuth();
+  const { user, api, getIdToken, loading: authLoading } = useAuth();
 
   const [activeTab, setActiveTab] = useState<TabType>("profile");
   const [profile, setProfile] = useState<InterviewerProfile | null>(null);
@@ -47,7 +52,12 @@ export default function InterviewerPortalPage() {
   const [yearsExperience, setYearsExperience] = useState<number>(5);
   const [rateMajor, setRateMajor] = useState<number>(5000);
   const [currency, setCurrency] = useState("INR");
+  const [linkedinUrl, setLinkedinUrl] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
+
+  // Document Auto-fill State
+  const [parsingDocument, setParsingDocument] = useState(false);
+  const [suggestedSkills, setSuggestedSkills] = useState<string[]>([]);
 
   // Skills State
   const [allSkills, setAllSkills] = useState<Skill[]>([]);
@@ -78,6 +88,9 @@ export default function InterviewerPortalPage() {
       setTitle(data.title || "");
       setBio(data.bio || "");
       setYearsExperience(data.years_experience ?? 5);
+      if (data.linkedin_url) {
+        setLinkedinUrl(data.linkedin_url);
+      }
       if (data.default_rate_minor) {
         setRateMajor(Math.round(data.default_rate_minor / 100));
       }
@@ -154,6 +167,51 @@ export default function InterviewerPortalPage() {
     }
   }, [activeTab, loadBookings, loadSlots, profile]);
 
+  // Handle Document Upload & Auto-fill
+  const handleDocumentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setParsingDocument(true);
+    setProfileError(null);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const token = await getIdToken();
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://interview-ready-api-153072465008.europe-west1.run.app";
+      const res = await fetch(`${apiUrl}/interviewers/me/parse-document`, {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      });
+
+      if (!res.ok) {
+        throw new Error("Could not extract data from document");
+      }
+      const data: ParsedProfileDocumentResponse = await res.json();
+      if (data.title) setTitle(data.title);
+      if (data.bio) setBio(data.bio);
+      if (data.years_experience !== null && data.years_experience !== undefined) {
+        setYearsExperience(data.years_experience);
+      }
+      if (data.suggested_rate_minor) {
+        setRateMajor(Math.round(data.suggested_rate_minor / 100));
+      }
+      if (data.suggested_currency) {
+        setCurrency(data.suggested_currency);
+      }
+      if (data.skills && data.skills.length > 0) {
+        setSuggestedSkills(data.skills);
+      }
+      setActionSuccess("Extracted profile details successfully via AI! Review and confirm below.");
+    } catch (err: unknown) {
+      const eObj = err as { message?: string };
+      setProfileError(eObj.message || "Failed to parse document. You can fill in the details manually.");
+    } finally {
+      setParsingDocument(false);
+      e.target.value = "";
+    }
+  };
+
   // Handle Create Profile
   const handleCreateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -166,6 +224,7 @@ export default function InterviewerPortalPage() {
         years_experience: Number(yearsExperience),
         default_rate_minor: Number(rateMajor) * 100,
         currency,
+        linkedin_url: linkedinUrl.trim() || undefined,
       });
       setProfile(created);
       setActionSuccess("Interviewer profile created and submitted for verification!");
@@ -189,6 +248,7 @@ export default function InterviewerPortalPage() {
         years_experience: Number(yearsExperience),
         default_rate_minor: Number(rateMajor) * 100,
         currency,
+        linkedin_url: linkedinUrl.trim() || undefined,
       });
       setProfile(updated);
       setActionSuccess("Profile updated successfully!");
@@ -318,6 +378,35 @@ export default function InterviewerPortalPage() {
             </div>
           </div>
 
+          {/* AI Auto-fill Banner */}
+          <div className="mb-8 rounded-xl border-2 border-dashed border-blue-200 bg-blue-50/50 p-6 text-center">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 mb-2">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <h3 className="font-bold text-gray-900 text-sm">Auto-fill from LinkedIn PDF or Resume</h3>
+            <p className="text-xs text-gray-500 mt-1 max-w-md mx-auto">
+              On LinkedIn: Go to your profile &rarr; click <strong>More</strong> &rarr; click <strong>Save to PDF</strong>. Upload it here to auto-populate your details in seconds.
+            </p>
+            <label className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-xs font-semibold text-white shadow hover:bg-blue-700 cursor-pointer transition">
+              {parsingDocument ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+              <span>{parsingDocument ? "Extracting with AI..." : "Upload LinkedIn PDF / Resume"}</span>
+              <input
+                type="file"
+                accept=".pdf,.txt,.doc,.docx"
+                onChange={handleDocumentUpload}
+                disabled={parsingDocument}
+                className="hidden"
+              />
+            </label>
+          </div>
+
+          {actionSuccess && (
+            <div className="mb-6 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-green-600" />
+              <span>{actionSuccess}</span>
+            </div>
+          )}
+
           {profileError && (
             <div className="mb-6 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
               <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
@@ -328,6 +417,22 @@ export default function InterviewerPortalPage() {
           <form onSubmit={handleCreateProfile} className="space-y-6">
             <div>
               <label className="block text-xs font-semibold uppercase text-gray-700 mb-1">
+                LinkedIn Profile URL
+              </label>
+              <input
+                type="url"
+                value={linkedinUrl}
+                onChange={(e) => setLinkedinUrl(e.target.value)}
+                placeholder="https://www.linkedin.com/in/your-profile"
+                className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+              <p className="text-[11px] text-gray-500 mt-1">
+                Used by administrators to verify your employment and assign the Verified badge.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold uppercase text-gray-700 mb-1">
                 Professional Title / Headline
               </label>
               <input
@@ -335,7 +440,7 @@ export default function InterviewerPortalPage() {
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Senior Staff Software Engineer @ Meta"
+                placeholder="e.g. Senior Staff Software Engineer @ Google"
                 className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
@@ -349,10 +454,23 @@ export default function InterviewerPortalPage() {
                 required
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                placeholder="Describe your background, domains (e.g. Distributed Systems, Frontend Architecture, System Design), and how you run mock interviews."
+                placeholder="Describe your engineering focus, past tech stacks, and how you mentor or interview candidates."
                 className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
+
+            {suggestedSkills.length > 0 && (
+              <div className="rounded-xl border border-blue-100 bg-blue-50/40 p-3">
+                <span className="text-xs font-semibold text-blue-900">Detected Skills from Profile:</span>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {suggestedSkills.map((sk) => (
+                    <span key={sk} className="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                      {sk}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
@@ -411,7 +529,7 @@ export default function InterviewerPortalPage() {
                 className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-blue-700 transition disabled:opacity-50"
               >
                 {savingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserCheck className="h-4 w-4" />}
-                <span>Submit Profile & Verification</span>
+                <span>Submit Profile & Request Verification</span>
               </button>
             </div>
           </form>
@@ -448,9 +566,27 @@ export default function InterviewerPortalPage() {
               )}
             </div>
             <p className="text-sm font-medium text-gray-600 mt-1">{profile.title}</p>
-            <p className="text-xs text-gray-500 mt-1">
-              Rate: {profile.currency} {profile.default_rate_minor ? (profile.default_rate_minor / 100).toLocaleString() : "—"} / hour • {profile.years_experience} years experience
-            </p>
+            <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-gray-500">
+              <span>
+                Rate: {profile.currency} {profile.default_rate_minor ? (profile.default_rate_minor / 100).toLocaleString() : "—"} / hr
+              </span>
+              <span>•</span>
+              <span>{profile.years_experience} years experience</span>
+              {profile.linkedin_url && (
+                <>
+                  <span>•</span>
+                  <a
+                    href={profile.linkedin_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 font-semibold text-blue-600 hover:underline"
+                  >
+                    <span>LinkedIn Profile</span>
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                </>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -472,7 +608,7 @@ export default function InterviewerPortalPage() {
           </div>
         </div>
 
-        {/* Verification Status Banner */}
+        {/* Verification Status Notice */}
         {isPending && (
           <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50/70 p-4 text-xs sm:text-sm text-amber-900 flex items-start gap-3">
             <Clock className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
@@ -556,93 +692,134 @@ export default function InterviewerPortalPage() {
 
       {/* Tab 1: Profile & Pricing */}
       {activeTab === "profile" && (
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 shadow-sm">
-          <h2 className="text-lg font-bold text-gray-900 mb-6">Edit Profile & Default Pricing</h2>
-          <form onSubmit={handleUpdateProfile} className="space-y-6">
-            <div>
-              <label className="block text-xs font-semibold uppercase text-gray-700 mb-1">
-                Headline / Title
-              </label>
+        <div className="space-y-6">
+          {/* Quick Auto-update from Document */}
+          <div className="rounded-2xl border border-blue-200 bg-blue-50/40 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-600 shrink-0">
+                <FileText className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-gray-900">Auto-update from LinkedIn PDF or Resume</h3>
+                <p className="text-xs text-gray-500">
+                  Upload an updated LinkedIn export or CV to refresh your title, experience, and bio automatically.
+                </p>
+              </div>
+            </div>
+            <label className="shrink-0 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow hover:bg-blue-700 cursor-pointer transition">
+              {parsingDocument ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+              <span>{parsingDocument ? "Extracting..." : "Upload Document"}</span>
               <input
-                type="text"
-                required
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                type="file"
+                accept=".pdf,.txt,.doc,.docx"
+                onChange={handleDocumentUpload}
+                disabled={parsingDocument}
+                className="hidden"
               />
-            </div>
+            </label>
+          </div>
 
-            <div>
-              <label className="block text-xs font-semibold uppercase text-gray-700 mb-1">
-                Bio
-              </label>
-              <textarea
-                rows={5}
-                required
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 shadow-sm">
+            <h2 className="text-lg font-bold text-gray-900 mb-6">Edit Profile & Default Pricing</h2>
+            <form onSubmit={handleUpdateProfile} className="space-y-6">
               <div>
                 <label className="block text-xs font-semibold uppercase text-gray-700 mb-1">
-                  Years of Experience
+                  LinkedIn Profile URL
                 </label>
                 <input
-                  type="number"
-                  min={0}
-                  max={80}
-                  required
-                  value={yearsExperience}
-                  onChange={(e) => setYearsExperience(Number(e.target.value))}
+                  type="url"
+                  value={linkedinUrl}
+                  onChange={(e) => setLinkedinUrl(e.target.value)}
+                  placeholder="https://www.linkedin.com/in/your-profile"
                   className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold uppercase text-gray-700 mb-1">
-                  Hourly Rate
+                  Headline / Title
                 </label>
                 <input
-                  type="number"
-                  min={0}
+                  type="text"
                   required
-                  value={rateMajor}
-                  onChange={(e) => setRateMajor(Number(e.target.value))}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
                   className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold uppercase text-gray-700 mb-1">
-                  Currency
+                  Bio
                 </label>
-                <select
-                  value={currency}
-                  onChange={(e) => setCurrency(e.target.value)}
+                <textarea
+                  rows={5}
+                  required
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
                   className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-gray-700 mb-1">
+                    Years of Experience
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={80}
+                    required
+                    value={yearsExperience}
+                    onChange={(e) => setYearsExperience(Number(e.target.value))}
+                    className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-gray-700 mb-1">
+                    Hourly Rate
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    required
+                    value={rateMajor}
+                    onChange={(e) => setRateMajor(Number(e.target.value))}
+                    className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-gray-700 mb-1">
+                    Currency
+                  </label>
+                  <select
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                    className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    <option value="INR">INR (₹)</option>
+                    <option value="USD">USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="GBP">GBP (£)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-gray-100 flex justify-end">
+                <button
+                  type="submit"
+                  disabled={savingProfile}
+                  className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-blue-700 transition disabled:opacity-50"
                 >
-                  <option value="INR">INR (₹)</option>
-                  <option value="USD">USD ($)</option>
-                  <option value="EUR">EUR (€)</option>
-                  <option value="GBP">GBP (£)</option>
-                </select>
+                  {savingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserCheck className="h-4 w-4" />}
+                  <span>Save Profile Changes</span>
+                </button>
               </div>
-            </div>
-
-            <div className="pt-4 border-t border-gray-100 flex justify-end">
-              <button
-                type="submit"
-                disabled={savingProfile}
-                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-blue-700 transition disabled:opacity-50"
-              >
-                {savingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserCheck className="h-4 w-4" />}
-                <span>Save Profile Changes</span>
-              </button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       )}
 

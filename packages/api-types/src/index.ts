@@ -40,9 +40,20 @@ export interface InterviewerProfile {
   years_experience?: number | null;
   default_rate_minor?: number | null;
   currency?: string | null;
+  linkedin_url?: string | null;
   is_verified: boolean;
   verification_status: VerificationStatus;
   skills: InterviewerSkill[];
+}
+
+export interface ParsedProfileDocumentResponse {
+  title?: string | null;
+  bio?: string | null;
+  years_experience?: number | null;
+  skills: string[];
+  suggested_rate_minor?: number | null;
+  suggested_currency?: string | null;
+  raw_preview?: string | null;
 }
 
 export interface Skill {
@@ -269,6 +280,7 @@ export interface AdminInterviewerVerificationResponse {
   email: string;
   title?: string | null;
   years_experience?: number | null;
+  linkedin_url?: string | null;
   status: string;
   submitted_at?: string | null;
   reviewed_at?: string | null;

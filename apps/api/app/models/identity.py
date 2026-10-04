@@ -106,6 +106,7 @@ class InterviewerProfile(TimestampMixin, Base):
     years_experience: Mapped[int | None] = mapped_column(Integer)
     default_rate_minor: Mapped[int | None] = mapped_column(BigInteger)
     currency: Mapped[str | None] = mapped_column(CHAR(3))
+    linkedin_url: Mapped[str | None] = mapped_column(String(500))
     is_verified: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default=false(), nullable=False
     )
