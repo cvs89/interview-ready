@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Search, User as UserIcon, Video } from "lucide-react";
+import { Briefcase, LogOut, Search, User as UserIcon, Video } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -31,6 +31,23 @@ export function Navbar() {
                 className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
               >
                 My Bookings
+              </Link>
+            )}
+            {user ? (
+              <Link
+                href="/interviewer"
+                className="flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-blue-600 transition"
+              >
+                <Briefcase className="h-4 w-4" />
+                {apiUser?.role === "INTERVIEWER" ? "Interviewer Portal" : "Become an Interviewer"}
+              </Link>
+            ) : (
+              <Link
+                href="/auth/interviewer"
+                className="flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-blue-600 transition"
+              >
+                <Briefcase className="h-4 w-4" />
+                For Interviewers
               </Link>
             )}
             {apiUser?.role === "ADMIN" && (

@@ -1,4 +1,4 @@
-import { Award, ChevronRight, ShieldCheck, Video, Zap } from "lucide-react";
+import { Award, Briefcase, ChevronRight, ShieldCheck, Video, Zap } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -78,6 +78,28 @@ export default function HomePage() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Become an Interviewer Section */}
+      <section className="py-16 bg-gradient-to-r from-blue-900 to-indigo-900 text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-800/80 px-3 py-1 text-xs font-semibold text-blue-200 mb-3 border border-blue-700">
+              <Briefcase className="h-3.5 w-3.5" /> For Experienced Engineers
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold">Are you an experienced technical interviewer?</h2>
+            <p className="mt-2 text-blue-200 max-w-2xl text-sm sm:text-base">
+              Monetize your expertise on your own schedule. Set your hourly pricing, publish availability, and mentor candidates aiming for top tech tiers.
+            </p>
+          </div>
+          <Link
+            href="/auth/interviewer"
+            className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-blue-900 shadow hover:bg-blue-50 transition"
+          >
+            <span>Apply as an Interviewer</span>
+            <ChevronRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
     </div>
