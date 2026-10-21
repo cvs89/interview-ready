@@ -1,3 +1,4 @@
+import re
 import uuid
 from datetime import UTC, datetime
 
@@ -41,6 +42,29 @@ class InterviewerService:
         return f"{role_label} • #{short_id}"
 
     @staticmethod
+    def sanitize_public_bio(bio: str | None, real_name: str | None) -> str | None:
+        if not bio:
+            return bio
+        cleaned = bio
+        # Strip user's full name and individual name tokens (>2 chars) case-insensitively
+        if real_name and real_name.strip():
+            cleaned = re.sub(re.escape(real_name.strip()), "", cleaned, flags=re.IGNORECASE)
+            for token in real_name.strip().split():
+                if len(token) >= 3:
+                    cleaned = re.sub(
+                        r"\b" + re.escape(token) + r"\b", "", cleaned, flags=re.IGNORECASE
+                    )
+        # Strip email addresses, URLs, and phone numbers
+        cleaned = re.sub(r"[\w.+-]+@[\w-]+\.[\w.-]+", "", cleaned)
+        cleaned = re.sub(r"https?://\S+|www\.\S+|linkedin\.com/\S+", "", cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r"(?:\+?\d{1,3}[\s.-]?)?(?:\(?\d{3,5}\)?[\s.-]?)?\d{3,5}[\s.-]?\d{4}", "", cleaned)
+        # Clean leftover pipe separators and extra whitespace
+        cleaned = re.sub(r"\s*\|\s*", " • ", cleaned)
+        cleaned = re.sub(r"(?:•\s*){2,}", "• ", cleaned)
+        cleaned = re.sub(r"\s{2,}", " ", cleaned).strip(" •|-,\n\t")
+        return cleaned or "Experienced technical interviewer and engineering mentor."
+
+    @staticmethod
     def to_profile_response(
         profile: InterviewerProfile,
         *,
@@ -63,11 +87,16 @@ class InterviewerService:
             if public
             else profile.user.full_name
         )
+        bio = (
+            InterviewerService.sanitize_public_bio(profile.bio, profile.user.full_name)
+            if public
+            else profile.bio
+        )
         linkedin_url = None if public else profile.linkedin_url
         return ProfileResponse(
             id=profile.id,
             full_name=display_name,
-            bio=profile.bio,
+            bio=bio,
             title=profile.title,
             years_experience=profile.years_experience,
             default_rate_minor=profile.default_rate_minor,

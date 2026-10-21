@@ -60,8 +60,8 @@ class DocumentParserService:
             "Analyze the provided text from a LinkedIn profile / resume and return JSON matching "
             "this schema:\n"
             "{\n"
-            '  "title": string (e.g. "Staff Software Engineer @ Google"),\n'
-            '  "bio": string (concise 2-3 sentence summary of expertise and background),\n'
+            '  "title": string (clean role title ONLY, e.g. "Staff Software Engineer" or "Senior Drupal Developer", WITHOUT the person\'s name),\n'
+            '  "bio": string (anonymous 2-3 sentence summary of technical expertise and interviewing background — DO NOT include the person\'s name, phone number, email, URLs, or city),\n'
             '  "years_experience": integer (total years of engineering experience),\n'
             '  "skills": list of strings (e.g. ["System Design", "Python", "Kubernetes"]),\n'
             '  "suggested_rate": integer (suggested hourly mock interview rate in INR e.g. 5000),\n'
@@ -162,15 +162,17 @@ class DocumentParserService:
             if re.search(r"\b" + re.escape(skill) + r"\b", text, re.IGNORECASE)
         ]
 
-        # Heuristic 4: Summary / Bio
-        summary_lines = lines[:4]
+        # Heuristic 4: Summary / Bio (avoid top header lines that contain phone/email/name)
+        body_lines = [
+            line
+            for line in lines[1:8]
+            if not re.search(r"[\w.+-]+@[\w-]+\.[\w.-]+|(?:\+?\d{1,3}[\s.-]?)?\d{3,5}[\s.-]?\d{4}|linkedin\.com", line, re.IGNORECASE)
+        ]
         bio = (
-            " ".join(summary_lines)
-            if summary_lines
-            else (
-                f"Experienced {title} with {years_exp}+ years in software engineering "
-                "and system architecture."
-            )
+            f"Experienced {title} with {years_exp}+ years in software engineering "
+            f"and technical leadership ({', '.join(skills_detected[:4]) or 'Architecture & Code Review'})."
+            if not body_lines
+            else " ".join(body_lines[:3])
         )
         if len(bio) > 1000:
             bio = bio[:997] + "..."

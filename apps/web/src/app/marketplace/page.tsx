@@ -76,7 +76,7 @@ export default function MarketplacePage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14 bg-[#FFF8F0] min-h-screen">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-16 sm:pt-16 sm:pb-20 bg-[#FFF8F0] min-h-screen">
       {/* Header Banner */}
       <div className="mb-10 max-w-3xl">
         <div className="inline-flex items-center gap-2 rounded-full border border-[#ECC2A4] bg-[#FDF5EE] px-3.5 py-1 text-xs font-semibold text-[#9B3B25] mb-3">
@@ -138,7 +138,7 @@ export default function MarketplacePage() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {interviewers.map((profile) => (
                   <InterviewerCard key={profile.id} profile={profile} />
                 ))}

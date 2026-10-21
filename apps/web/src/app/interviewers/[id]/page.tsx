@@ -1,11 +1,12 @@
 "use client";
 
 import type { AvailabilitySlot, InterviewerProfile } from "@interview-ready/api-types";
-import { Award, Briefcase, CheckCircle2, ChevronLeft, Loader2, ShieldCheck } from "lucide-react";
+import { Award, Briefcase, ChevronLeft, Loader2, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
+import { sanitizeInterviewerBio } from "../../../components/marketplace/InterviewerCard";
 import { SlotSelector } from "../../../components/marketplace/SlotSelector";
 import { useAuth } from "../../../context/AuthContext";
 import { formatCurrency } from "../../../lib/api-client";
@@ -76,10 +77,13 @@ export default function InterviewerProfilePage() {
   }
 
   const shortId = profile.id.split("-")[0].slice(0, 4).toUpperCase();
-  const roleTitle = profile.title || "Technical Interviewer";
-  const anonymousTitle = profile.full_name?.includes("#")
-    ? profile.full_name
-    : `${roleTitle} • ${profile.is_verified ? "Verified " : ""}#${shortId}`;
+  const roleTitle = (
+    profile.title ||
+    profile.full_name?.split("•")[0] ||
+    "Technical Interviewer"
+  ).trim();
+  const anonymousReservationLabel = `${roleTitle} (#${shortId})`;
+  const cleanBio = sanitizeInterviewerBio(profile.bio, roleTitle);
 
   return (
     <div className="min-h-screen bg-[#FFF8F0] py-10">
@@ -95,24 +99,25 @@ export default function InterviewerProfilePage() {
         {/* Profile Header */}
         <div className="rounded-[24px] border border-[#EADBCE] bg-white p-8 sm:p-10 shadow-sm mb-8">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <h1 className="font-serif text-3xl sm:text-4xl font-normal text-[#342523]">{anonymousTitle}</h1>
-                {profile.is_verified && (
-                  <span title="Verified Interviewer">
-                    <CheckCircle2 className="h-5 w-5 text-[#2C6E49] fill-[#E8F4EC]" />
-                  </span>
-                )}
+            <div className="flex-1">
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E8F4EC] border border-[#B4DEC4] px-3 py-1 text-xs font-semibold text-[#2C6E49]">
+                  <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[#2C6E49]" />
+                  <span>{profile.is_verified ? `Verified Mentor • #${shortId}` : `Mentor • #${shortId}`}</span>
+                </span>
+                <span className="inline-flex items-center rounded-full bg-[#FDF5EE] border border-[#ECC2A4] px-3 py-1 text-xs font-medium text-[#6E5652]">
+                  Identity Protected for Unbiased Practice
+                </span>
               </div>
-              <p className="text-sm font-medium text-[#6E5652] mb-3 inline-flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 text-[#9B3B25]" />
-                <span>Anonymous Vetted Profile • Identity kept confidential for unbiased practice</span>
-              </p>
+
+              <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#342523] leading-tight mb-3">
+                {roleTitle}
+              </h1>
 
               {profile.years_experience !== null && profile.years_experience !== undefined && (
-                <div className="flex items-center gap-2 text-sm text-[#6E5652] mb-4">
-                  <Briefcase className="h-4 w-4 text-[#96817D]" />
-                  <span>{profile.years_experience} years engineering experience</span>
+                <div className="flex items-center gap-2 text-sm font-medium text-[#6E5652] mb-5">
+                  <Briefcase className="h-4 w-4 text-[#9B3B25]" />
+                  <span>{profile.years_experience} years engineering & interviewing experience</span>
                 </div>
               )}
 
@@ -132,19 +137,23 @@ export default function InterviewerProfilePage() {
             </div>
 
             {profile.default_rate_minor !== null && profile.default_rate_minor !== undefined && (
-              <div className="rounded-2xl bg-[#FFFDFB] border border-[#EADBCE] p-5 text-center sm:text-right min-w-[160px]">
-                <span className="text-xs font-medium text-[#6E5652] uppercase tracking-wider block">Rate per session</span>
-                <span className="text-2xl font-serif font-normal text-[#342523] block mt-1">
+              <div className="rounded-2xl bg-[#FFFDFB] border border-[#EADBCE] p-5 text-center sm:text-right min-w-[170px] shrink-0">
+                <span className="text-xs font-semibold text-[#6E5652] uppercase tracking-wider block">
+                  Rate per session
+                </span>
+                <span className="text-2xl sm:text-3xl font-serif font-bold text-[#9B3B25] block mt-1">
                   {formatCurrency(profile.default_rate_minor, profile.currency || "INR")}
                 </span>
               </div>
             )}
           </div>
 
-          {profile.bio && (
+          {cleanBio && (
             <div className="border-t border-[#EADBCE] pt-6 mt-6">
-              <h3 className="font-medium text-[#342523] text-sm uppercase tracking-wider mb-2">About the Interviewer</h3>
-              <p className="text-sm text-[#6E5652] leading-relaxed whitespace-pre-line">{profile.bio}</p>
+              <h3 className="font-semibold text-[#342523] text-xs uppercase tracking-wider mb-2">
+                About the Interviewer
+              </h3>
+              <p className="text-sm text-[#4E3936] leading-relaxed whitespace-pre-line">{cleanBio}</p>
             </div>
           )}
         </div>
@@ -153,7 +162,7 @@ export default function InterviewerProfilePage() {
         <div className="rounded-[24px] border border-[#EADBCE] bg-white p-8 sm:p-10 shadow-sm">
           <SlotSelector
             interviewerId={profile.id}
-            interviewerName={anonymousTitle}
+            interviewerName={anonymousReservationLabel}
             slots={slots}
           />
         </div>
