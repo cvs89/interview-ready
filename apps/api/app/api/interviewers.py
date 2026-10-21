@@ -165,7 +165,7 @@ async def discover_interviewers(
         limit=limit,
         offset=offset,
     )
-    return [InterviewerService.to_profile_response(profile) for profile in profiles]
+    return [InterviewerService.to_profile_response(profile, public=True) for profile in profiles]
 
 
 @router.get("/interviewers/{interviewer_id}", response_model=ProfileResponse)
@@ -173,7 +173,7 @@ async def get_public_profile(interviewer_id: uuid.UUID, session: Session) -> Pro
     profile = await InterviewerRepository(session).get_public_profile(interviewer_id)
     if profile is None:
         raise ApiError("PROFILE_NOT_FOUND", "Interviewer profile not found.", 404)
-    return InterviewerService.to_profile_response(profile)
+    return InterviewerService.to_profile_response(profile, public=True)
 
 
 @router.get(

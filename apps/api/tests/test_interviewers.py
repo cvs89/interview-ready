@@ -349,6 +349,9 @@ async def test_discovery_filters_and_hides_verification_notes(
     public_profile = await client.get(f"/interviewers/{first_profile}")
     assert "notes" not in public_profile.json()
     assert "email" not in public_profile.json()
+    assert public_profile.json()["full_name"] != "First Interviewer"
+    assert "Staff Engineer • Verified #" in public_profile.json()["full_name"]
+    assert public_profile.json()["linkedin_url"] is None
 
 
 @pytest.mark.asyncio
@@ -395,4 +398,13 @@ async def test_profile_linkedin_url(
     )
     assert res.status_code == 201
     assert res.json()["linkedin_url"] == "https://www.linkedin.com/in/janedoe"
+
+    # Public endpoint must never expose linkedin_url or real name
+    profile_id = uuid.UUID(res.json()["id"])
+    await approve_profile(client, current, ids["admin"], profile_id)
+    pub_res = await client.get(f"/interviewers/{profile_id}")
+    assert pub_res.status_code == 200
+    assert pub_res.json()["linkedin_url"] is None
+    assert pub_res.json()["full_name"] != "First Interviewer"
+    assert "Principal Architect • Verified #" in pub_res.json()["full_name"]
 

@@ -1,7 +1,7 @@
 "use client";
 
 import type { AvailabilitySlot, InterviewerProfile } from "@interview-ready/api-types";
-import { Award, Briefcase, CheckCircle2, ChevronLeft, Loader2 } from "lucide-react";
+import { Award, Briefcase, CheckCircle2, ChevronLeft, Loader2, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -75,6 +75,12 @@ export default function InterviewerProfilePage() {
     );
   }
 
+  const shortId = profile.id.split("-")[0].slice(0, 4).toUpperCase();
+  const roleTitle = profile.title || "Technical Interviewer";
+  const anonymousTitle = profile.full_name?.includes("#")
+    ? profile.full_name
+    : `${roleTitle} • ${profile.is_verified ? "Verified " : ""}#${shortId}`;
+
   return (
     <div className="min-h-screen bg-[#FFF8F0] py-10">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
@@ -91,14 +97,17 @@ export default function InterviewerProfilePage() {
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <h1 className="font-serif text-3xl sm:text-4xl font-normal text-[#342523]">{profile.full_name}</h1>
+                <h1 className="font-serif text-3xl sm:text-4xl font-normal text-[#342523]">{anonymousTitle}</h1>
                 {profile.is_verified && (
                   <span title="Verified Interviewer">
                     <CheckCircle2 className="h-5 w-5 text-[#2C6E49] fill-[#E8F4EC]" />
                   </span>
                 )}
               </div>
-              <p className="text-base font-medium text-[#6E5652] mb-3">{profile.title || "Technical Interviewer"}</p>
+              <p className="text-sm font-medium text-[#6E5652] mb-3 inline-flex items-center gap-1.5">
+                <ShieldCheck className="h-4 w-4 text-[#9B3B25]" />
+                <span>Anonymous Vetted Profile • Identity kept confidential for unbiased practice</span>
+              </p>
 
               {profile.years_experience !== null && profile.years_experience !== undefined && (
                 <div className="flex items-center gap-2 text-sm text-[#6E5652] mb-4">
@@ -144,7 +153,7 @@ export default function InterviewerProfilePage() {
         <div className="rounded-[24px] border border-[#EADBCE] bg-white p-8 sm:p-10 shadow-sm">
           <SlotSelector
             interviewerId={profile.id}
-            interviewerName={profile.full_name}
+            interviewerName={anonymousTitle}
             slots={slots}
           />
         </div>

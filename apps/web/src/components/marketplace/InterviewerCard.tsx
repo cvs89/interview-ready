@@ -1,5 +1,5 @@
 import type { InterviewerProfile } from "@interview-ready/api-types";
-import { Award, Briefcase, Calendar, CheckCircle2 } from "lucide-react";
+import { Award, Briefcase, Calendar, CheckCircle2, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -10,31 +10,32 @@ interface InterviewerCardProps {
 }
 
 export function InterviewerCard({ profile }: InterviewerCardProps) {
-  const initials = profile.full_name
+  const shortId = profile.id.split("-")[0].slice(0, 4).toUpperCase();
+  const roleTitle = profile.title || "Technical Interviewer";
+  const anonymousTitle = profile.full_name?.includes("#")
     ? profile.full_name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .substring(0, 2)
-        .toUpperCase()
-    : "IR";
+    : `${roleTitle} • ${profile.is_verified ? "Verified " : ""}#${shortId}`;
 
   return (
     <div className="card-confidence card-confidence-interactive flex flex-col justify-between p-6 sm:p-7">
       <div>
         <div className="flex items-start justify-between gap-4 mb-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#F8DDC9] text-[#9B3B25] font-editorial font-bold text-lg border border-[#ECC2A4]">
-              {initials}
+            <div
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#F8DDC9] text-[#9B3B25] font-editorial font-bold text-sm border border-[#ECC2A4]"
+              title="Identity Protected Interviewer"
+            >
+              #{shortId}
             </div>
             <div>
               <div className="flex items-center gap-1.5">
                 <h3 className="font-editorial font-bold text-lg text-[#342523]">
-                  {profile.full_name}
+                  {anonymousTitle}
                 </h3>
               </div>
-              <p className="text-xs sm:text-sm font-medium text-[#6E5652]">
-                {profile.title || "Technical Interviewer"}
+              <p className="text-xs sm:text-sm font-medium text-[#6E5652] flex items-center gap-1">
+                <ShieldCheck className="h-3.5 w-3.5 text-[#9B3B25]" />
+                <span>Anonymous Vetted Leader</span>
               </p>
             </div>
           </div>

@@ -568,7 +568,12 @@ export default function InterviewerPortalPage() {
                   </span>
                 )}
               </div>
-              <p className="text-sm font-medium text-[#6E5652] mt-1">{profile.title}</p>
+              <p className="text-sm font-medium text-[#6E5652] mt-1">
+                {profile.title} •{" "}
+                <span className="text-xs text-[#9B3B25] font-semibold">
+                  Public Marketplace Alias: {profile.title || "Technical Interviewer"} • Verified #{profile.id.split("-")[0].slice(0, 4).toUpperCase()} (Real name hidden from candidates)
+                </span>
+              </p>
               <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-[#6E5652]">
                 <span>
                   Rate: {profile.currency} {profile.default_rate_minor ? (profile.default_rate_minor / 100).toLocaleString() : "—"} / hr

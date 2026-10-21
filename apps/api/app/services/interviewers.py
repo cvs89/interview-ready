@@ -33,7 +33,19 @@ class InterviewerService:
         self.audit_service = AuditService(session)
 
     @staticmethod
-    def to_profile_response(profile: InterviewerProfile) -> ProfileResponse:
+    def format_anonymous_display_name(profile: InterviewerProfile) -> str:
+        short_id = str(profile.id).split("-")[0][:4].upper()
+        role_label = (profile.title or "Technical Interviewer").strip()
+        if profile.is_verified:
+            return f"{role_label} • Verified #{short_id}"
+        return f"{role_label} • #{short_id}"
+
+    @staticmethod
+    def to_profile_response(
+        profile: InterviewerProfile,
+        *,
+        public: bool = False,
+    ) -> ProfileResponse:
         verification_status = (
             profile.verification.status if profile.verification else VerificationStatus.PENDING
         )
@@ -46,15 +58,21 @@ class InterviewerService:
             )
             for link in sorted(profile.skill_links, key=lambda item: item.skill.name)
         ]
+        display_name = (
+            InterviewerService.format_anonymous_display_name(profile)
+            if public
+            else profile.user.full_name
+        )
+        linkedin_url = None if public else profile.linkedin_url
         return ProfileResponse(
             id=profile.id,
-            full_name=profile.user.full_name,
+            full_name=display_name,
             bio=profile.bio,
             title=profile.title,
             years_experience=profile.years_experience,
             default_rate_minor=profile.default_rate_minor,
             currency=profile.currency,
-            linkedin_url=profile.linkedin_url,
+            linkedin_url=linkedin_url,
             is_verified=profile.is_verified,
             verification_status=verification_status,
             skills=skills,

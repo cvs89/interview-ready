@@ -26,6 +26,13 @@ def create_session_jwt(
     now = datetime.now(UTC)
     exp = now + timedelta(seconds=app_settings.session_jwt_ttl_seconds)
 
+    short_id = str(user.id).split("-")[0][:4].upper()
+    display_name = (
+        f"Verified Interviewer #{short_id}"
+        if role.upper() == "INTERVIEWER"
+        else user.full_name
+    )
+
     payload = {
         "sub": str(user.id),
         "booking_id": str(booking_id),
@@ -33,7 +40,7 @@ def create_session_jwt(
         "role": role,
         "user_role": user.role.value if hasattr(user.role, "value") else str(user.role),
         "email": user.email,
-        "name": user.full_name,
+        "name": display_name,
         "iat": int(now.timestamp()),
         "exp": int(exp.timestamp()),
         "jti": secrets.token_hex(16),
@@ -73,10 +80,17 @@ def create_livekit_token(
         }
     )
 
+    short_id = str(user.id).split("-")[0][:4].upper()
+    participant_name = (
+        f"Verified Interviewer #{short_id}"
+        if role.upper() == "INTERVIEWER"
+        else user.full_name
+    )
+
     payload = {
         "iss": app_settings.livekit_api_key,
         "sub": str(user.id),
-        "name": user.full_name,
+        "name": participant_name,
         "video": {
             "room": room_name,
             "roomJoin": True,

@@ -432,7 +432,7 @@ async def test_join_window_lead_and_grace_enforcement(
 async def test_both_participants_joining_promotes_session_to_active(
     desktop_auth_context: DesktopAuthContext,
 ) -> None:
-    client, session_factory, current, ids, _, _ = desktop_auth_context
+    client, session_factory, current, ids, _, settings = desktop_auth_context
     booking = await create_booking_in_db(
         session_factory,
         ids["profile_id"],
@@ -477,6 +477,15 @@ async def test_both_participants_joining_promotes_session_to_active(
     )
     assert i_exchange.status_code == 200
     assert i_exchange.json()["room_name"] == room_name
+
+    # Verify interviewer's real name is anonymized in LiveKit token and Session JWT
+    i_lk = jwt.decode(
+        i_exchange.json()["livekit_token"],
+        settings.livekit_api_secret,
+        algorithms=["HS256"],
+    )
+    assert i_lk["name"].startswith("Verified Interviewer #")
+    assert i_lk["name"] != "Interviewer One"
 
     # Check that session is now ACTIVE and booking is IN_PROGRESS
     async with session_factory() as session:
