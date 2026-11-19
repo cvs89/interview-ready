@@ -10,7 +10,6 @@ from app.core.errors import ApiError
 from app.core.rate_limit import RateLimiter
 from app.db.session import get_session
 from app.models.identity import User, UserRole
-from app.repositories.interviewers import InterviewerRepository
 from app.schemas.interviewers import (
     AvailabilitySlotCreateRequest,
     AvailabilitySlotResponse,
@@ -24,8 +23,8 @@ from app.schemas.interviewers import (
     VerificationResponse,
     VerificationReviewRequest,
 )
+from app.services.backend import InterviewerRepository, InterviewerService
 from app.services.document_parser import DocumentParserService
-from app.services.interviewers import InterviewerService
 
 router = APIRouter(tags=["interviewers"])
 admin_router = APIRouter(prefix="/admin", tags=["admin"])

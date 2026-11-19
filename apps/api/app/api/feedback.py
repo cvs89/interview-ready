@@ -16,7 +16,7 @@ from app.schemas.feedback import (
     RubricDraftRequest,
     RubricSubmitRequest,
 )
-from app.services.feedback import ReviewService, RubricService
+from app.services.backend import ReviewService, RubricService
 
 feedback_router = APIRouter(prefix="/bookings", tags=["feedback", "rubrics", "reviews"])
 reviews_router = APIRouter(prefix="/interviewers", tags=["reviews"])

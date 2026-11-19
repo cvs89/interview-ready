@@ -16,16 +16,19 @@ async def liveness() -> dict[str, str]:
 async def readiness(request: Request) -> dict[str, Any] | JSONResponse:
     checks: dict[str, str] = {}
     try:
-        async with request.app.state.db_engine.connect() as connection:
-            await connection.execute(text("SELECT 1"))
+        if request.app.state.settings.database_backend == "firestore":
+            await request.app.state.firestore_store.ping()
+        else:
+            async with request.app.state.db_engine.connect() as connection:
+                await connection.execute(text("SELECT 1"))
         checks["database"] = "ok"
-    except Exception as e:
-        checks["database"] = f"unavailable: {type(e).__name__} - {e}"
+    except Exception:
+        checks["database"] = "unavailable"
     try:
         await request.app.state.redis.ping()
         checks["redis"] = "ok"
-    except Exception as e:
-        checks["redis"] = f"unavailable: {type(e).__name__} - {e}"
+    except Exception:
+        checks["redis"] = "unavailable"
     ready = all(value == "ok" for value in checks.values())
     payload = {"status": "ready" if ready else "not_ready", "checks": checks}
     return payload if ready else JSONResponse(status_code=503, content=payload)

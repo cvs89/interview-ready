@@ -16,8 +16,7 @@ from app.schemas.bookings import (
     WebhookEventResponse,
 )
 from app.schemas.sessions import JoinStatusResponse
-from app.services.bookings import BookingService, PaymentService
-from app.services.sessions import DesktopAuthService
+from app.services.backend import BookingService, DesktopAuthService, PaymentService
 
 bookings_router = APIRouter(prefix="/bookings", tags=["bookings"])
 payments_router = APIRouter(prefix="/payments", tags=["payments"])

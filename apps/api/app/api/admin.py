@@ -20,7 +20,7 @@ from app.schemas.admin import (
     AdminUserStatusUpdateRequest,
     AdminVerificationListResponse,
 )
-from app.services.admin import AdminService
+from app.services.backend import AdminService
 
 admin_router = APIRouter(prefix="/admin", tags=["admin"])
 

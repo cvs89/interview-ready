@@ -1,7 +1,7 @@
 from functools import lru_cache
 from typing import Annotated, Literal
 
-from pydantic import field_validator
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
@@ -11,6 +11,10 @@ class Settings(BaseSettings):
     app_name: str = "Interview Ready API"
     app_env: Literal["development", "test", "staging", "production"] = "development"
     log_level: str = "INFO"
+    database_backend: Literal["postgresql", "firestore"] = "postgresql"
+    firestore_project_id: str | None = None
+    firestore_database_id: str = "(default)"
+    firestore_scan_limit: int = Field(default=1000, ge=1, le=5000)
     database_url: str = (
         "postgresql+asyncpg://interview_ready:local_only_password@localhost:5432/interview_ready"
     )

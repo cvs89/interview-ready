@@ -16,7 +16,7 @@ from app.schemas.sessions import (
     MintDesktopTicketRequest,
     MintDesktopTicketResponse,
 )
-from app.services.sessions import DesktopAuthService
+from app.services.backend import DesktopAuthService
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 

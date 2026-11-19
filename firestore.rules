@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // FastAPI is the only database gateway. Admin/server SDK access uses IAM.
+    // Never enable public client writes for booking, payment or role documents.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

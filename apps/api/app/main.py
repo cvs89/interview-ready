@@ -1,3 +1,4 @@
+import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -28,19 +29,42 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-        app.state.db_engine = create_database_engine(
-            app_settings.database_url,
-            pool_size=app_settings.db_pool_size,
-            max_overflow=app_settings.db_max_overflow,
-            pool_timeout=app_settings.db_pool_timeout,
-            pool_recycle=app_settings.db_pool_recycle,
-            pool_pre_ping=app_settings.db_pool_pre_ping,
-        )
-        app.state.session_factory = create_session_factory(app.state.db_engine)
+        if app_settings.database_backend == "firestore":
+            from google.cloud.firestore_v1 import AsyncClient
+
+            from app.firestore_backend.store import FirestoreStore
+
+            project = app_settings.firestore_project_id or app_settings.gcp_project_id
+            if not project:
+                raise ValueError("FIRESTORE_PROJECT_ID is required for Firestore")
+            emulator = os.getenv("FIRESTORE_EMULATOR_HOST")
+            if emulator and app_settings.app_env in ("production", "staging"):
+                raise ValueError("Firestore emulator is forbidden in production/staging")
+            if project.startswith("demo-") and not emulator:
+                raise ValueError("Demo projects require FIRESTORE_EMULATOR_HOST")
+            app.state.firestore_store = FirestoreStore(
+                AsyncClient(project=project, database=app_settings.firestore_database_id),
+                app_settings,
+            )
+        else:
+            app.state.db_engine = create_database_engine(
+                app_settings.database_url,
+                pool_size=app_settings.db_pool_size,
+                max_overflow=app_settings.db_max_overflow,
+                pool_timeout=app_settings.db_pool_timeout,
+                pool_recycle=app_settings.db_pool_recycle,
+                pool_pre_ping=app_settings.db_pool_pre_ping,
+            )
+            app.state.session_factory = create_session_factory(app.state.db_engine)
         app.state.redis = create_redis_client(app_settings.redis_url)
-        yield
-        await app.state.redis.aclose()
-        await app.state.db_engine.dispose()
+        try:
+            yield
+        finally:
+            await app.state.redis.aclose()
+            if app_settings.database_backend == "firestore":
+                await app.state.firestore_store.close()
+            else:
+                await app.state.db_engine.dispose()
 
     app = FastAPI(title=app_settings.app_name, version="0.1.0", lifespan=lifespan)
     app.state.settings = app_settings

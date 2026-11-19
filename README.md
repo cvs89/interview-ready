@@ -15,6 +15,11 @@ This repository currently contains the Module 01 foundation only. It intentional
 
 ## Local services
 
+**Firestore alternative:** the FastAPI backend can now run with `DATABASE_BACKEND=firestore`.
+See [Firestore setup and migration](docs/FIRESTORE_MIGRATION.md) for the local emulator,
+security model, limitations and explicit production cutover. Existing PostgreSQL settings
+remain the default until you opt in. No SQL migration is required in Firestore mode.
+
 ```bash
 docker compose up -d postgres redis
 ```

@@ -9,7 +9,7 @@ from app.core.rate_limit import RateLimiter
 from app.db.session import get_session
 from app.models.identity import User, UserRole
 from app.schemas.audit import AuditLogResponse
-from app.services.audit import AuditService
+from app.services.backend import AuditService
 
 audit_router = APIRouter(prefix="/admin/audit-logs", tags=["admin-audit"])
 

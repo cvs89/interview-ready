@@ -1,5 +1,55 @@
 # Interview Ready — Project Status and AI Handoff
 
+## Git handoff — 19 November 2026
+
+- Firestore changes are being published on `codex/firestore-backend`; merge into `main` and deploy the updated API image before enabling Firestore in the live service.
+- Unrelated local SQL concurrency, desktop and web edits are excluded from this branch's commit.
+- Read-only Cloud Run inspection: `interview-ready-api` in `europe-west1` still uses `DATABASE_URL` and a Cloud SQL attachment; `APP_ENV=development`. No live cutover was performed.
+- Live Firestore configuration must use `DATABASE_BACKEND=firestore`, `FIRESTORE_PROJECT_ID=interview-ready-52479`, and `FIRESTORE_DATABASE_ID=default`. Preserve other required service settings and test a no-traffic revision before switching users.
+
+## Hosted Firestore setup — 19 November 2026
+
+- Owner created `projects/interview-ready-52479/databases/default`: **Standard / FIRESTORE_NATIVE**, location **eur3**, API reports **freeTier=true**. Database ID is `default` (no parentheses).
+- Owner approved local-backend configuration, rules/index deployment, and isolated synthetic test writes; **not** production API cutover or Cloud SQL deletion.
+- Local ignored `apps/api/.env` now selects `DATABASE_BACKEND=firestore`, `FIRESTORE_PROJECT_ID=interview-ready-52479`, `FIRESTORE_DATABASE_ID=default`. Existing unrelated settings were preserved.
+- Added `firebase.firestore.hosted.json` targeting this named database only; emulator config remains separate. Deny-direct-client-access rules and six composite indexes were successfully deployed. **All six indexes verified READY.**
+- Python SDK read-only connectivity to the hosted named database passed using a short-lived CLI credential in memory. No credentials were saved by the test.
+- Added and successfully ran `apps/api/scripts/firestore_hosted_smoke.py`: synthetic identities, profile/verification, reservation, mock payment/replay, feedback privacy and review query. **Hosted smoke test passed** against `default` with a short-lived CLI token held in memory. **All 36 synthetic documents were deleted**, including the random test-root marker; no real Firebase Auth accounts or payment-provider transactions were created.
+- **Local startup prerequisites still pending:** Application Default Credentials (`gcloud auth application-default login`) were not found; configured Redis was unreachable. Full API readiness, real login and desktop end-to-end testing are therefore not claimed.
+- Security incident: Firebase CLI's JSON account-list command unexpectedly emitted cached credentials in tool output. Do not repeat/copy that output; revoke/renew the Firebase CLI sign-in. No credentials were added to source files. Avoid `firebase login:list --json` in future diagnostics.
+- Cloud SQL, production Cloud Run deployment and billing settings were not changed.
+
+## FastAPI + Firestore implementation — 19 November 2026
+
+**Status: opt-in backend implemented and locally verified; production cutover and SQL data migration NOT performed.** This section supersedes PostgreSQL-only architecture assumptions below, but does not mark unrelated modules or production readiness complete.
+
+- User selected Firestore with FastAPI to avoid upgrading the suspended Cloud SQL trial.
+- Cloud SQL source: project `interview-ready-52479`, instance `interview-ready-db`, PostgreSQL 18, `europe-west1`. Do not delete or upgrade it without explicit approval. Whether it contains important records remains unconfirmed.
+- Added async Firestore persistence in `apps/api/app/firestore_backend/`, selected through `app/services/backend.py` for existing root and `/api/v1` routes. Default remains PostgreSQL for safe opt-in; set `DATABASE_BACKEND=firestore` explicitly.
+- Covered identity/profile/verification/skills/availability, reservation and payment transactions, admin views, desktop sessions, feedback/private notes, reviews/ratings, notifications/audit, and authenticated task processing.
+- Safety: transactional schedule guards, slot ownership and expiry, provider idempotency keys, webhook deduplication, late-payment refund jobs, session replay checks, private-note isolation, backend role/ownership checks, deny-all client rules, bounded contention retries.
+- Added local emulator config, composite indexes, Firestore environment example, dedicated emulator CI, explicit API cutover script, and [setup/migration guide](docs/FIRESTORE_MIGRATION.md).
+- Preserved all pre-existing uncommitted SQL concurrency, desktop and web changes. No cloud resources, billing settings, production environments, or source SQL data were modified.
+
+### Verification actually performed
+
+- Firestore contract suite: **38 passed** with memory doubles and the real local Firestore emulator (Java 21 / Firebase CLI 15.37.0), including contention, replay and notification-channel deduplication tests.
+- Existing API suite plus new contracts, excluding the pre-existing uncommitted SQL race file: **91 passed, 18 skipped** without the emulator. The skips are the emulator-specific cases, which passed in the separate emulator run.
+- Strict mypy: passed for all 78 application files.
+- Ruff lint and formatting: passed for the new Firestore code and changed API integration files; JSON configs, shell syntax and `git diff --check` passed.
+- Whole-suite run is **not green**: five failures in pre-existing `apps/api/tests/test_concurrency_and_races.py`; its dependency override annotates `request` as `httpx.Request` at line 159 instead of FastAPI/Starlette Request. This file was not modified by the Firestore work.
+- Whole-repository Ruff is **not green**: seven existing issues in the LinkedIn migration, document parser and SQL interviewer service. These unrelated files were not reformatted.
+- Hosted synthetic database checks subsequently passed as recorded above. Real Stripe charge/refund, real email/FCM delivery, and browser/desktop end-to-end production runs remain unverified.
+
+### Pending before hosted use
+
+1. Decide whether the old SQL data is disposable. Important records require a recoverable export and reviewed transformation/import; no automatic importer or cloud data transfer has been performed.
+2. Database creation and rules/index deployment are complete as recorded above. Verify the deployed API's service identity and review quotas before cutover.
+3. Select Firestore explicitly in the API environment and verify credentials, Redis, LiveKit and payment configuration. Do not run the old SQL-only deploy script for this path.
+4. Schedule authenticated expiry/reminder/refund tasks. External notifications are durable **pending outbox intents**, not claimed delivery; actual email/FCM transport remains unprovisioned (the SQL implementation used mocks).
+5. Verify backup/recovery, real provider integration and the full user journey before accepting payments. Free Firestore quota does not include managed backup/PITR or other infrastructure costs.
+6. Directory/admin filtering uses bounded scans for compatibility (default 1000 documents); larger datasets require cursor/read-model optimisation. These limits fail explicitly rather than silently truncating results.
+
 ## Competitor research — 4 October 2026
 
 - Public-offering research: [Competitor report](docs/COMPETITOR_RESEARCH_2026-10-04.md).
@@ -58,7 +108,7 @@
   - `apps/desktop/src/styles.css`, `components/DevicePreview.tsx`, `components/DeepLinkPrompt.tsx`, `components/ErrorDisplay.tsx`, `components/LiveRoom.tsx`.
 - **Blockers**: None.
 
-Last updated: 2026-10-04 (Asia/Kolkata)
+Last updated: 2026-11-19 (Asia/Kolkata)
 
 This file is the durable implementation tracker for humans and AI tools. Update it at the end of every module. The numbered prompt files in `interview-ready-codex-prompts/` remain the source of truth for requirements.
 

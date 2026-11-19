@@ -8,7 +8,7 @@ from app.core.auth import get_current_user
 from app.db.session import get_session
 from app.models.identity import User
 from app.schemas.notification import InAppNotificationResponse
-from app.services.notification import NotificationService
+from app.services.backend import NotificationService
 
 notifications_router = APIRouter(prefix="/notifications", tags=["notifications"])
 

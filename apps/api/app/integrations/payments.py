@@ -81,6 +81,7 @@ class PaymentProvider(ABC):
         amount_minor: int,
         currency: str,
         reason: str | None = None,
+        idempotency_key: str | None = None,
     ) -> RefundResult: ...
 
 
@@ -103,8 +104,10 @@ class MockPaymentProvider(PaymentProvider):
         cancel_url: str | None = None,
         metadata: dict[str, Any] | None = None,
     ) -> PaymentCheckoutResult:
-        session_id = f"cs_test_{uuid.uuid4().hex}"
-        payment_id = f"pi_test_{uuid.uuid4().hex}"
+        key = (metadata or {}).get("checkout_idempotency_key")
+        identifier = uuid.uuid5(uuid.NAMESPACE_URL, str(key)).hex if key else uuid.uuid4().hex
+        session_id = f"cs_test_{identifier}"
+        payment_id = f"pi_test_{identifier}"
         checkout_url = f"https://checkout.interviewready.local/pay/{session_id}"
         return PaymentCheckoutResult(
             checkout_session_id=session_id,
@@ -193,9 +196,15 @@ class MockPaymentProvider(PaymentProvider):
         amount_minor: int,
         currency: str,
         reason: str | None = None,
+        idempotency_key: str | None = None,
     ) -> RefundResult:
+        refund_id = (
+            uuid.uuid5(uuid.NAMESPACE_URL, idempotency_key).hex
+            if idempotency_key
+            else uuid.uuid4().hex
+        )
         return RefundResult(
-            refund_id=f"re_test_{uuid.uuid4().hex}",
+            refund_id=f"re_test_{refund_id}",
             amount_minor=amount_minor,
             currency=currency,
             status="succeeded",
@@ -255,6 +264,9 @@ class StripePaymentProvider(PaymentProvider):
             "success_url": success_url or fallback_success_url,
             "cancel_url": cancel_url or fallback_cancel_url,
         }
+        if metadata and metadata.get("checkout_idempotency_key"):
+            session_params["idempotency_key"] = metadata["checkout_idempotency_key"]
+        session_params["payment_intent_data"] = {"metadata": meta}
 
         try:
             session = await asyncio.to_thread(
@@ -401,11 +413,14 @@ class StripePaymentProvider(PaymentProvider):
         amount_minor: int,
         currency: str,
         reason: str | None = None,
+        idempotency_key: str | None = None,
     ) -> RefundResult:
         params: dict[str, Any] = {
             "amount": amount_minor,
             "api_key": self.secret_key,
         }
+        if idempotency_key:
+            params["idempotency_key"] = idempotency_key
         if provider_payment_id.startswith("pi_"):
             params["payment_intent"] = provider_payment_id
         elif provider_payment_id.startswith("ch_"):

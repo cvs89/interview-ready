@@ -1,4 +1,5 @@
 from collections.abc import AsyncIterator
+from typing import Any
 
 from fastapi import Request
 from sqlalchemy.ext.asyncio import (
@@ -34,6 +35,9 @@ def create_session_factory(engine: AsyncEngine) -> async_sessionmaker[AsyncSessi
     return async_sessionmaker(engine, expire_on_commit=False)
 
 
-async def get_session(request: Request) -> AsyncIterator[AsyncSession]:
+async def get_session(request: Request) -> AsyncIterator[Any]:
+    if request.app.state.settings.database_backend == "firestore":
+        yield request.app.state.firestore_store
+        return
     async with request.app.state.session_factory() as session:
         yield session

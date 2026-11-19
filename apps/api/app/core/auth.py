@@ -13,7 +13,7 @@ from app.integrations.firebase import (
     verify_firebase_id_token,
 )
 from app.models.identity import User, UserRole
-from app.services.identity import IdentityService
+from app.services.backend import IdentityService
 
 CurrentUserDependency = Callable[..., Coroutine[Any, Any, User]]
 
