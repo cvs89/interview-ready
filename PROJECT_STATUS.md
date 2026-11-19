@@ -2,7 +2,7 @@
 
 ## Git handoff — 19 November 2026
 
-- Firestore changes are being published on `codex/firestore-backend`; merge into `main` and deploy the updated API image before enabling Firestore in the live service.
+- Firestore implementation commit `0eef83f` was published on `codex/firestore-backend` and merged into `main` on 19 November 2026. Deploy the updated API image and configure the live service before enabling Firestore for users; the Git merge alone does not switch databases.
 - Unrelated local SQL concurrency, desktop and web edits are excluded from this branch's commit.
 - Read-only Cloud Run inspection: `interview-ready-api` in `europe-west1` still uses `DATABASE_URL` and a Cloud SQL attachment; `APP_ENV=development`. No live cutover was performed.
 - Live Firestore configuration must use `DATABASE_BACKEND=firestore`, `FIRESTORE_PROJECT_ID=interview-ready-52479`, and `FIRESTORE_DATABASE_ID=default`. Preserve other required service settings and test a no-traffic revision before switching users.
