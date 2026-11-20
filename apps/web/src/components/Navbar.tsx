@@ -13,6 +13,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 
 import { useAuth } from "../context/AuthContext";
+import { BrandLogo } from "./BrandLogo";
 
 export function Navbar() {
   const { user, apiUser, logout, loading } = useAuth();
@@ -20,15 +21,13 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-[#EADBCE] bg-[#FFF8F0]/90 backdrop-blur-md">
-      <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2 group">
-            <span className="font-editorial text-2xl font-bold tracking-tight text-[#342523]">
-              interview ready<span className="text-[#9B3B25]">.</span>
-            </span>
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-2 px-4 sm:px-6 lg:px-8">
+        <div className="flex min-w-0 items-center gap-6">
+          <Link href="/" aria-label="Interview Ready home" className="block shrink-0 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#9B3B25]">
+            <BrandLogo />
           </Link>
 
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden xl:flex items-center gap-4">
             <Link
               href="/marketplace"
               className="flex items-center gap-1.5 text-sm font-medium text-[#342523] hover:text-[#9B3B25] transition"
@@ -73,13 +72,13 @@ export function Navbar() {
           </nav>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {loading ? (
-            <div className="h-9 w-24 animate-pulse rounded-full bg-[#EADBCE]" />
+            <div className="hidden h-9 w-24 animate-pulse rounded-full bg-[#EADBCE] sm:block" />
           ) : user ? (
-            <div className="flex items-center gap-3">
-              <div className="hidden sm:flex flex-col text-right">
-                <span className="text-sm font-semibold text-[#342523]">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="hidden lg:flex max-w-28 flex-col text-right">
+                <span className="truncate text-sm font-semibold text-[#342523]">
                   {apiUser?.full_name || user.displayName || user.email?.split("@")[0]}
                 </span>
                 <span className="text-xs text-[#6E5652] capitalize">
@@ -95,7 +94,7 @@ export function Navbar() {
               </Link>
               <button
                 onClick={() => logout()}
-                className="flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold text-[#6E5652] hover:bg-[#FDF5EE] hover:text-[#9B3B25] border border-transparent hover:border-[#ECC2A4] transition cursor-pointer"
+                className="hidden sm:flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold text-[#6E5652] hover:bg-[#FDF5EE] hover:text-[#9B3B25] border border-transparent hover:border-[#ECC2A4] transition cursor-pointer"
                 title="Log out"
               >
                 <LogOut className="h-4 w-4" />
@@ -122,8 +121,10 @@ export function Navbar() {
           {/* Mobile hamburger toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden flex h-10 w-10 items-center justify-center rounded-full border border-[#ECC2A4] bg-white text-[#342523] hover:bg-[#FDF5EE]"
+            className="xl:hidden flex h-10 w-10 items-center justify-center rounded-full border border-[#ECC2A4] bg-white text-[#342523] hover:bg-[#FDF5EE]"
             aria-label="Toggle Navigation Menu"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -132,7 +133,7 @@ export function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-[#EADBCE] bg-[#FFF8F0] px-4 pt-3 pb-6 space-y-3">
+        <div id="mobile-navigation" className="xl:hidden border-t border-[#EADBCE] bg-[#FFF8F0] px-4 pt-3 pb-6 space-y-3">
           <Link
             href="/marketplace"
             onClick={() => setMobileMenuOpen(false)}
@@ -170,6 +171,18 @@ export function Navbar() {
             </Link>
           )}
 
+          {user && (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                void logout();
+              }}
+              className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-[#342523] hover:bg-[#FDF5EE] sm:hidden"
+            >
+              <LogOut className="h-4 w-4 text-[#9B3B25]" />
+              Log out
+            </button>
+          )}
           {!user && (
             <div className="pt-2 flex flex-col gap-2">
               <Link

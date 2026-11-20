@@ -1,5 +1,12 @@
 # Interview Ready — Project Status and AI Handoff
 
+## Approved logo rollout — 20 November 2026
+
+- User approved the rehearsal-chair logo (v7): outline practice chair behind solid interview chair, with the tagline “Practice before the real interview”. Preserve the original terracotta, warm ivory and dark ink palette.
+- Added the approved image and shared `BrandLogo` component to the global web navigation, with responsive sizing, accessible home-link naming, and tablet/mobile navigation adjustments. Earlier rejected concepts remain local and are not included in this release.
+- Validation: web production build and targeted ESLint passed; desktop and 320px mobile browser previews checked, including mobile menu expansion. Unrelated local edits were excluded from the commit.
+- Publication target: existing `interview-ready-webnew` service in `europe-west1`, through its existing `main` push trigger. Live deployment verification is pending until that build completes.
+
 ## Git handoff — 19 November 2026
 
 - Firestore implementation commit `0eef83f` was published on `codex/firestore-backend` and merged into `main` on 19 November 2026. Deploy the updated API image and configure the live service before enabling Firestore for users; the Git merge alone does not switch databases.
