@@ -1,11 +1,18 @@
 # Interview Ready — Project Status and AI Handoff
 
+## Resume upload repair — 21 November 2026
+
+- Production logs showed the mobile browser completed `OPTIONS /interviewers/me/parse-document`, but the multipart `POST` never reached the API. The affected session used Microsoft Edge on Android through `www.interview-ready.net`.
+- Replaced the browser-to-API upload with a same-origin Next.js route that forwards the authenticated multipart request server-side. This removes the fragile cross-origin file-upload hop while preserving Firebase bearer authentication and upstream error responses.
+- Added client and API limits (non-empty, maximum 5 MB), explicit PDF/TXT/DOCX support, DOCX text extraction, rejection of legacy `.doc`, and actionable errors for scanned/unreadable files. The live Cloud Run web origin is also included in the API allowlist for other browser API calls.
+- Verification: 11 interviewer API tests passed, including DOCX and invalid-file cases; targeted Python/TypeScript lint passed; the production web build passed with the new dynamic upload route; a synthetic local-only multipart request traversed the web proxy and received the expected API `401`, proving the request body reaches the backend. Production deployment and an authenticated real-file check are pending.
+
 ## Approved logo rollout — 20 November 2026
 
 - User approved the rehearsal-chair logo (v7): outline practice chair behind solid interview chair, with the tagline “Practice before the real interview”. Preserve the original terracotta, warm ivory and dark ink palette.
 - Added the approved image and shared `BrandLogo` component to the global web navigation, with responsive sizing, accessible home-link naming, and tablet/mobile navigation adjustments. Earlier rejected concepts remain local and are not included in this release.
 - Validation: web production build and targeted ESLint passed; desktop and 320px mobile browser previews checked, including mobile menu expansion. Unrelated local edits were excluded from the commit.
-- Publication target: existing `interview-ready-webnew` service in `europe-west1`, through its existing `main` push trigger. Live deployment verification is pending until that build completes.
+- Published commit `0ef4b98` to `main`. Website build `e318d9d0-ed4e-46fb-bef4-87862b5828f8` succeeded; `interview-ready-webnew-00020-dg9` is serving 100% of traffic in `europe-west1`. Verified the approved logo loads on the live homepage. Local verification screenshot: `docs/brand/live-logo-desktop.jpg`. This post-deployment verification note is local until the next documentation commit, avoiding another build solely for a status update.
 
 ## Git handoff — 19 November 2026
 

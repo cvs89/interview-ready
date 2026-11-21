@@ -1,19 +1,22 @@
 import io
 import json
 import re
+import zipfile
 from typing import Any
+from xml.etree import ElementTree
 
 import httpx
 from pypdf import PdfReader
 
 from app.core.config import get_settings
+from app.core.errors import ApiError
 from app.schemas.interviewers import ParsedProfileDocumentResponse
 
 
 class DocumentParserService:
     @staticmethod
     def extract_text(file_bytes: bytes, filename: str) -> str:
-        """Extracts text from PDF bytes or plain text bytes."""
+        """Extract text from PDF, DOCX, or plain-text bytes."""
         if filename.lower().endswith(".pdf") or file_bytes.startswith(b"%PDF"):
             try:
                 reader = PdfReader(io.BytesIO(file_bytes))
@@ -22,7 +25,19 @@ class DocumentParserService:
                 if full_text:
                     return full_text
             except Exception:
-                pass
+                return ""
+            return ""
+        if filename.lower().endswith(".docx"):
+            try:
+                with zipfile.ZipFile(io.BytesIO(file_bytes)) as document:
+                    xml = document.read("word/document.xml")
+                root = ElementTree.fromstring(xml)
+                text_nodes = [node.text or "" for node in root.iter() if node.tag.endswith("}t")]
+                full_text = " ".join(part for part in text_nodes if part).strip()
+                if full_text:
+                    return full_text
+            except (KeyError, ElementTree.ParseError, zipfile.BadZipFile):
+                return ""
         try:
             return file_bytes.decode("utf-8", errors="replace").strip()
         except Exception:
@@ -34,8 +49,10 @@ class DocumentParserService:
     ) -> ParsedProfileDocumentResponse:
         text = cls.extract_text(file_bytes, filename)
         if not text:
-            return ParsedProfileDocumentResponse(
-                raw_preview="Could not extract text from document."
+            raise ApiError(
+                "DOCUMENT_TEXT_NOT_FOUND",
+                "We couldn't read text from this file. Use a text-based PDF, TXT, or DOCX resume.",
+                422,
             )
 
         settings = get_settings()
@@ -60,8 +77,11 @@ class DocumentParserService:
             "Analyze the provided text from a LinkedIn profile / resume and return JSON matching "
             "this schema:\n"
             "{\n"
-            '  "title": string (clean role title ONLY, e.g. "Staff Software Engineer" or "Senior Drupal Developer", WITHOUT the person\'s name),\n'
-            '  "bio": string (anonymous 2-3 sentence summary of technical expertise and interviewing background — DO NOT include the person\'s name, phone number, email, URLs, or city),\n'
+            '  "title": string (clean role title ONLY, for example "Staff Software '
+            "Engineer\"; WITHOUT the person's name),\n"
+            '  "bio": string (anonymous 2-3 sentence summary of technical expertise '
+            "and interviewing background; DO NOT include the person's name, phone "
+            "number, email, URLs, or city),\n"
             '  "years_experience": integer (total years of engineering experience),\n'
             '  "skills": list of strings (e.g. ["System Design", "Python", "Kubernetes"]),\n'
             '  "suggested_rate": integer (suggested hourly mock interview rate in INR e.g. 5000),\n'
@@ -166,11 +186,16 @@ class DocumentParserService:
         body_lines = [
             line
             for line in lines[1:8]
-            if not re.search(r"[\w.+-]+@[\w-]+\.[\w.-]+|(?:\+?\d{1,3}[\s.-]?)?\d{3,5}[\s.-]?\d{4}|linkedin\.com", line, re.IGNORECASE)
+            if not re.search(
+                r"[\w.+-]+@[\w-]+\.[\w.-]+|(?:\+?\d{1,3}[\s.-]?)?\d{3,5}[\s.-]?\d{4}|linkedin\.com",
+                line,
+                re.IGNORECASE,
+            )
         ]
+        skill_summary = ", ".join(skills_detected[:4]) or "Architecture & Code Review"
         bio = (
             f"Experienced {title} with {years_exp}+ years in software engineering "
-            f"and technical leadership ({', '.join(skills_detected[:4]) or 'Architecture & Code Review'})."
+            f"and technical leadership ({skill_summary})."
             if not body_lines
             else " ".join(body_lines[:3])
         )

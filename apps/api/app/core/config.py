@@ -19,7 +19,12 @@ class Settings(BaseSettings):
         "postgresql+asyncpg://interview_ready:local_only_password@localhost:5432/interview_ready"
     )
     redis_url: str = "redis://localhost:6379/0"
-    web_origins: Annotated[list[str], NoDecode] = ["http://localhost:3000"]
+    web_origins: Annotated[list[str], NoDecode] = [
+        "https://www.interview-ready.net",
+        "https://interview-ready.net",
+        "https://interview-ready-webnew-oocs5vsbma-ew.a.run.app",
+        "http://localhost:3000",
+    ]
     admin_emails: Annotated[list[str], NoDecode] = ["narukakomal27@gmail.com"]
     reservation_ttl_minutes: int = 10
     webhook_signing_secret: str = "local_dev_webhook_signing_secret"

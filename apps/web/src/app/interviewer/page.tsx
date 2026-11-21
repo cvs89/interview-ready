@@ -171,21 +171,36 @@ export default function InterviewerPortalPage() {
   const handleDocumentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size === 0) {
+      setProfileError("The selected file is empty.");
+      e.target.value = "";
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setProfileError("Resume files must be 5 MB or smaller.");
+      e.target.value = "";
+      return;
+    }
     setParsingDocument(true);
     setProfileError(null);
+    setActionSuccess(null);
     try {
       const formData = new FormData();
       formData.append("file", file);
       const token = await getIdToken();
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://interview-ready-api-153072465008.europe-west1.run.app";
-      const res = await fetch(`${apiUrl}/interviewers/me/parse-document`, {
+      const res = await fetch("/api/interviewer/parse-document", {
         method: "POST",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData,
       });
 
       if (!res.ok) {
-        throw new Error("Could not extract data from document");
+        const errorBody = (await res.json().catch(() => null)) as
+          | { error?: { message?: string } }
+          | null;
+        throw new Error(
+          errorBody?.error?.message || "Could not extract data from this document."
+        );
       }
       const data: ParsedProfileDocumentResponse = await res.json();
       if (data.title) setTitle(data.title);
@@ -393,7 +408,7 @@ export default function InterviewerPortalPage() {
                 <span>{parsingDocument ? "Extracting with AI..." : "Upload LinkedIn PDF / Resume"}</span>
                 <input
                   type="file"
-                  accept=".pdf,.txt,.doc,.docx"
+                  accept=".pdf,.txt,.docx,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                   onChange={handleDocumentUpload}
                   disabled={parsingDocument}
                   className="hidden"
@@ -719,7 +734,7 @@ export default function InterviewerPortalPage() {
                 <span>{parsingDocument ? "Extracting..." : "Upload Document"}</span>
                 <input
                   type="file"
-                  accept=".pdf,.txt,.doc,.docx"
+                  accept=".pdf,.txt,.docx,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                   onChange={handleDocumentUpload}
                   disabled={parsingDocument}
                   className="hidden"

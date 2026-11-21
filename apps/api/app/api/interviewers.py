@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime
+from pathlib import Path
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, File, Query, Response, UploadFile, status
@@ -65,10 +66,24 @@ async def parse_profile_document(
     file: Annotated[UploadFile, File()],
     _: CurrentUser,
 ) -> ParsedProfileDocumentResponse:
-    content = await file.read()
-    return await DocumentParserService.parse_profile_document(
-        content, file.filename or "profile.pdf"
-    )
+    filename = file.filename or ""
+    extension = Path(filename).suffix.casefold()
+    if extension not in {".pdf", ".txt", ".docx"}:
+        raise ApiError(
+            "UNSUPPORTED_DOCUMENT_TYPE",
+            "Upload a PDF, TXT, or DOCX resume.",
+            415,
+        )
+
+    max_bytes = 5 * 1024 * 1024
+    content = await file.read(max_bytes + 1)
+    await file.close()
+    if not content:
+        raise ApiError("EMPTY_DOCUMENT", "The selected file is empty.", 400)
+    if len(content) > max_bytes:
+        raise ApiError("DOCUMENT_TOO_LARGE", "Resume files must be 5 MB or smaller.", 413)
+
+    return await DocumentParserService.parse_profile_document(content, filename)
 
 
 @router.post("/interviewers/me/verification", response_model=VerificationResponse)

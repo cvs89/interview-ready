@@ -1,4 +1,6 @@
+import io
 import uuid
+import zipfile
 from collections.abc import AsyncIterator
 from datetime import UTC, datetime
 from typing import Annotated, TypeAlias
@@ -379,6 +381,65 @@ async def test_parse_profile_document_endpoint(
 
 
 @pytest.mark.asyncio
+async def test_parse_profile_docx_endpoint(
+    marketplace_context: MarketplaceContext,
+) -> None:
+    client, _, current, ids = marketplace_context
+    current["user_id"] = ids["first"]
+    document_xml = b"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+      <w:body><w:p><w:r><w:t>Principal Software Engineer</w:t></w:r></w:p>
+      <w:p><w:r><w:t>Python Kubernetes System Design 2017 - 2026</w:t></w:r></w:p></w:body>
+    </w:document>"""
+    docx = io.BytesIO()
+    with zipfile.ZipFile(docx, "w") as archive:
+        archive.writestr("word/document.xml", document_xml)
+
+    response = await client.post(
+        "/interviewers/me/parse-document",
+        files={
+            "file": (
+                "resume.docx",
+                docx.getvalue(),
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            )
+        },
+    )
+
+    assert response.status_code == 200, response.text
+    assert "Principal Software Engineer" in response.json()["title"]
+    assert "Python" in response.json()["skills"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("filename", "content", "expected_status", "expected_code"),
+    [
+        ("resume.doc", b"legacy word data", 415, "UNSUPPORTED_DOCUMENT_TYPE"),
+        ("resume.pdf", b"", 400, "EMPTY_DOCUMENT"),
+        ("resume.pdf", b"not a readable PDF", 422, "DOCUMENT_TEXT_NOT_FOUND"),
+    ],
+)
+async def test_parse_profile_document_rejects_invalid_files(
+    marketplace_context: MarketplaceContext,
+    filename: str,
+    content: bytes,
+    expected_status: int,
+    expected_code: str,
+) -> None:
+    client, _, current, ids = marketplace_context
+    current["user_id"] = ids["first"]
+
+    response = await client.post(
+        "/interviewers/me/parse-document",
+        files={"file": (filename, content, "application/octet-stream")},
+    )
+
+    assert response.status_code == expected_status
+    assert response.json()["error"]["code"] == expected_code
+
+
+@pytest.mark.asyncio
 async def test_profile_linkedin_url(
     marketplace_context: MarketplaceContext,
 ) -> None:
@@ -407,4 +468,3 @@ async def test_profile_linkedin_url(
     assert pub_res.json()["linkedin_url"] is None
     assert pub_res.json()["full_name"] != "First Interviewer"
     assert "Principal Architect • Verified #" in pub_res.json()["full_name"]
-
